@@ -24,6 +24,9 @@ src/Pawn.cpp
 
 src/King.h
 src/King.cpp
+
+src/Board.h
+src/Board.cpp
 )
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)

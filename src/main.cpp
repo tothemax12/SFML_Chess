@@ -4,26 +4,10 @@
 #include <SFML/Graphics.hpp>
 
 int main() {
-    // Game game = Game();
-    // game.printBoard();
+    Game game = Game();
+    int a = 4;
+    a = a+7;
 
-    // std::cout << "Hoopla";
-
-    sf::RenderWindow window(sf::VideoMode({200, 200}), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
-
-    while (window.isOpen())
-    {
-        while (const std::optional event = window.pollEvent())
-        {
-            if (event->is<sf::Event::Closed>())
-                window.close();
-        }
-
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
+    std::cout << "Hoopla\n";
     return 0;
 }

@@ -1,0 +1,4 @@
+cd /home/max/SFML_Chess/build
+cmake --build .
+cd bin
+./main
