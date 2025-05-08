@@ -6,7 +6,7 @@ class King : public Piece
 private:
     /* data */
 public:
-    King(/* args */);
+    King(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString);
     ~King();
     
     std::vector<int>* getBasicMoves() override;

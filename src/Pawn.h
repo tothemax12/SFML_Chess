@@ -1,14 +1,13 @@
 #pragma once
 #include "Piece.h"
-//#include "Game.h"
+#include <cctype>
 
 class Pawn : public Piece
 {
 private:
-    bool isFirstTurn = true;
     
 public:
-    Pawn(char pieceIcon, int cord);
+    Pawn(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString);
     Pawn();
     ~Pawn();
     

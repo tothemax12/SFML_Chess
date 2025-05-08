@@ -1,6 +1,8 @@
 #include "King.h"
 
-King::King() {
+King::King(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString) : 
+Piece(pieceIcon, cord, pieceTexture, currentBoardString)
+{
 
 }
 

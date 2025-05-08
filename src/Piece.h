@@ -2,17 +2,22 @@
 #include "iostream"
 #include <vector>
 //#include "Game.h"
+#include <string>
+#include <SFML/Graphics.hpp>
 
 class Piece
 {
 public:
     char pieceIcon;
     int cord;
+    bool isFirstTurn;
+    std::string* currentBoardString;
 
-    Piece(char pieceIcon, int cord);
-    Piece();
+    Piece(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString);
     ~Piece();
 
+    sf::Texture pieceTexture;
+    sf::Sprite pieceSprite;
 
     //returns a list of just the basic moves a piece can make, not accounting for anything else
     virtual std::vector<int>* getBasicMoves();
@@ -22,5 +27,6 @@ public:
     virtual std::vector<int>* getValidMoves();
     std::vector<int>* removeLocationsNotOnBoard(std::vector<int>* validMoves);
     virtual std::vector<int>* getCapturableSpaces();
-    Piece* getPiecesICanCapture(std::vector<Piece>* piecesCurrentlyOnBoard);
+    std::vector<Piece> getPiecesICanCapture(std::vector<Piece>* piecesCurrentlyOnBoard);
+    int* convertStrIndexToBoardCords(int stringIdx);
 };

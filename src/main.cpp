@@ -3,10 +3,22 @@
 #include "Pawn.h"
 #include <SFML/Graphics.hpp>
 
+sf::Texture boardTexture;
+sf::Texture wPawnTexture;
+sf::Texture bPawnTexture;
+
 int main() {
-    Game game = Game();
-    int a = 4;
-    a = a+7;
+    //int check = boardTexture.loadFromFile("//res//chess_board.png");
+    //works int check1 = boardTexture.loadFromFile("/home/max/SFML_Chess/src/chess_board.png");
+    int check1 = boardTexture.loadFromFile("/home/max/SFML_Chess/res/chess_board.png");
+    int check2 = wPawnTexture.loadFromFile("/home/max/SFML_Chess/res/white-pawn-svgrepo-com.png");
+    int check3 = bPawnTexture.loadFromFile("/home/max/SFML_Chess/res/black-pawn-svgrepo-com.png");
+
+    //int check2 = boardTexture.loadFromFile("/res/chess_board.png");
+    //int check3 = boardTexture.loadFromFile("\res\chess_board.png");
+
+    Game game = Game(&boardTexture, &wPawnTexture, &bPawnTexture);
+    game.draw();
 
     std::cout << "Hoopla\n";
     return 0;
