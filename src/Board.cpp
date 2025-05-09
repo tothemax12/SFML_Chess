@@ -1,8 +1,9 @@
 #include "Board.h"
 
-Board::Board(sf::Texture* boardTexture, sf::Texture* wPawnTexture, sf::Texture* bPawnTexture) : 
+Board::Board(sf::Texture* boardTexture, sf::Texture* highlightedSquareTexture, sf::Texture* wPawnTexture, sf::Texture* bPawnTexture) : 
 boardTexture(boardTexture),
-boardSprite(*boardTexture), 
+boardSprite(*boardTexture),
+highlightSquareSprite(*highlightedSquareTexture),
 wPawnTexture(wPawnTexture),
 bPawnTexture(bPawnTexture) 
 //testPawn1('P', 47, wPawnTexture, &boardString),
@@ -19,8 +20,20 @@ bPawnTexture(bPawnTexture)
                 //    00000000
                 //    00000000"
     
-    boardString = "pPpP00000000000000000000000000p0p0000ppP000000000000000000000000";
+    //boardString = "pPpP00000000000000000000000000p0p0000ppP000000000000000000000000";
+    //boardString = "00000000000000p0000000000000000000P00000000000000000000000000000";
+    readInBoardFromFile();
+    std::cout << boardString << " \n";
     piecesCurrentlyOnBoard = initializePiecesOnBoardBasedOnBoardString();
+
+    highlightSquareSprite.setScale({.4, .4});
+    highlightSquareSprite.setColor(sf::Color::Magenta);
+
+    for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++) {
+        std::cout << "Memory Address: " << &piecesCurrentlyOnBoard->at(i) << "\n";
+        std::cout << "cord : " << piecesCurrentlyOnBoard->at(i)->cord << "\n";
+    }
+
     //testPawn1 = Pawn('P', 40, wPawnTexture);
     
     //piecesCurrentlyOnBoard.emplace_back(testPawn1);
@@ -35,14 +48,24 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString() {
     //Pawn::Pawn(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString) : 
 
     std::vector<Piece*>* piecesOnTheBoard = new std::vector<Piece*>;
+    int* screenCords;
     for (int i = 0; i < boardString.size(); i++) {
         if (boardString[i] != '0') {
             if(boardString[i] == 'P') {
-                Pawn* newPawn = new Pawn('P', i, wPawnTexture, &boardString);
+                Pawn* newPawn = new Pawn('P', i, wPawnTexture, &boardString, piecesOnTheBoard);
+                
+                //set the cord based on the index in the string arr
+                screenCords = convertStrIndexToBoardCords(newPawn->cord);
+                newPawn->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+                
                 piecesOnTheBoard->emplace_back(newPawn);
             }
             if(boardString[i] == 'p') {
-                Pawn* newPawn = new Pawn('p', i, bPawnTexture, &boardString);
+                Pawn* newPawn = new Pawn('p', i, bPawnTexture, &boardString, piecesOnTheBoard);
+
+                screenCords = convertStrIndexToBoardCords(newPawn->cord);
+                newPawn->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+
                 piecesOnTheBoard->emplace_back(newPawn);
             }
         }
@@ -76,4 +99,64 @@ void Board::drawPiecesCurrentlyOnBoard(sf::RenderWindow* window) {
     for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++) {
         window->draw(piecesCurrentlyOnBoard->at(i)->pieceSprite);
     }
+}
+
+void Board::drawHighlightedValidMoves(sf::RenderWindow* window, std::vector<int>* validMoves) {
+    int* screenCords;
+    for (int i = 0; i < validMoves->size(); i++) {
+        //get cords
+        screenCords = convertStrIndexToBoardCords(validMoves->at(i));
+        highlightSquareSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+        window->draw(highlightSquareSprite);
+    }
+}
+
+
+int* Board::convertStrIndexToBoardCords(int stringIdx) {
+    //0->63
+	//spit out (x, y)
+	
+	int x = 0;
+	int y = 0;
+
+	for (int i = 0; i < 63; i++) {
+		
+		if (i == stringIdx) {
+			break;
+		}
+		
+		x += 80;
+		
+		if (x > 560) {
+			x = 0;
+			y += 80;
+		}
+	}
+	int* cords = new int[2];
+	cords[0] = x;
+	cords[1] = y;
+	return cords;
+}
+
+int Board::convertBoardCordsToStringIndex(int x, int y) {
+    int strIndex = (floor((8*x)/640) + floor((8*y)/640) + 7*floor((8*y)/640)); 
+    return strIndex;
+}
+
+void Board::readInBoardFromFile() {
+    std::ifstream boardTextFile;
+    std::string currentLine;
+    boardTextFile.open("/home/max/SFML_Chess/res/boardString.txt");
+    
+    while(!boardTextFile.eof()) {
+        getline(boardTextFile, currentLine);
+        boardString += currentLine;
+    }
+
+    boardTextFile.close();
+}
+
+//returns if true if val is in the range of [low, high], false otherwise
+bool Board::inRange(int val, int low, int high) {
+    return (val >= low && val <= high);    
 }

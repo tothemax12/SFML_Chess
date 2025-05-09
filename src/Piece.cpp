@@ -1,20 +1,16 @@
 #include "Piece.h"
 
-Piece::Piece(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString) : pieceSprite(*pieceTexture)
+Piece::Piece(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString, std::vector<Piece*>* piecesCurrentlyOnBoard) : 
+pieceSprite(*pieceTexture)
 {
 	this->pieceIcon = pieceIcon;
 	this->cord = cord;
 	this->isFirstTurn = true;
     this->currentBoardString = currentBoardString;
-
-    //set the cord based on the index in the string arr
-    int* screenCords = convertStrIndexToBoardCords(cord);
-    pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+    this->piecesCurrentlyOnBoard = piecesCurrentlyOnBoard;
     
     //scale down the piece sprite a bit
-    pieceSprite.setScale({.4, .4});
-
-    delete screenCords;
+    //pieceSprite.setScale({.4, .4});
 }
 
 Piece::~Piece()
@@ -32,8 +28,8 @@ std::vector<int>* Piece::getValidMoves() {
 //this function is for removing invalid locations from valid locations arr
 std::vector<int>* Piece::removeLocationsNotOnBoard(std::vector<int>* validMoves) {
     //remove vals off board
-    for(int i = 0; i < validMoves->size(); i++) {
-        if (!(validMoves->at(i) >= 0 && validMoves->at(i) <= 64)) {
+    for(int i = validMoves->size()-1; i > -1; i--) {
+        if (!(validMoves->at(i) >= 0 && validMoves->at(i) <= 63)) {
             validMoves->erase(validMoves->begin()+i);
         }
     }
@@ -42,6 +38,62 @@ std::vector<int>* Piece::removeLocationsNotOnBoard(std::vector<int>* validMoves)
 }
 
 std::vector<int>* Piece::getCapturableSpaces() {
+    return nullptr;
+}
+
+std::vector<int>* Piece::getAllCapturableSpacesForAGiveSide(std::string sideThatIsCapturingPieces) {
+    std::vector<int>* allSpacesOfPiecesThatCanBeCaptured = new std::vector<int>;
+    std::vector<int>* currentPiecesCapturableSpaces;
+        
+    if (sideThatIsCapturingPieces == "White") {
+        for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++) {
+            //if there is a white piece, get the spaces it is currently able to capture
+            if (isupper(piecesCurrentlyOnBoard->at(i)->pieceIcon)) {
+                currentPiecesCapturableSpaces = piecesCurrentlyOnBoard->at(i)->getCapturableSpaces();
+                for (int j = 0; j < currentPiecesCapturableSpaces->size(); j++)
+                {
+                    allSpacesOfPiecesThatCanBeCaptured->push_back(currentPiecesCapturableSpaces->at(j));
+                }
+            }
+        }
+    } else if (sideThatIsCapturingPieces == "Black") {
+        for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++) {
+            //if there is a black piece, get the spaces it is currently able to capture
+            if (!isupper(piecesCurrentlyOnBoard->at(i)->pieceIcon)) {
+                currentPiecesCapturableSpaces = piecesCurrentlyOnBoard->at(i)->getCapturableSpaces();
+                for (int j = 0; j < currentPiecesCapturableSpaces->size(); j++)
+                {
+                    allSpacesOfPiecesThatCanBeCaptured->push_back(currentPiecesCapturableSpaces->at(j));
+                }
+            }
+        }
+    }
+
+    return allSpacesOfPiecesThatCanBeCaptured;
+}
+
+//returns a pointer to a string containing the icons of all oppnent piece icons that can be captured by a given side
+std::string* Piece::getAllPiecesThatCanBeCapturedBySide(std::string sideThatIsCapturingPieces) {
+    std::string piecesThatCanBeCaptured = "";
+    std::vector<int>* allSpacesOfPiecesThatCanBeCaptured;
+
+    //grab a list of all the spaces on the board that contain pieces that the requested side can capture
+    allSpacesOfPiecesThatCanBeCaptured = getAllCapturableSpacesForAGiveSide("White");
+
+    printf("all capturable spaces for white side:\n");
+    for (int i = 0; i < allSpacesOfPiecesThatCanBeCaptured->size(); i++)
+    {
+        printf("%d\n", allSpacesOfPiecesThatCanBeCaptured->at(i));
+    }
+
+    allSpacesOfPiecesThatCanBeCaptured = getAllCapturableSpacesForAGiveSide("Black");
+
+    printf("all capturable spaces for white side:\n");
+    for (int i = 0; i < allSpacesOfPiecesThatCanBeCaptured->size(); i++)
+    {
+        printf("%d\n", allSpacesOfPiecesThatCanBeCaptured->at(i));
+    }
+
     return nullptr;
 }
 
@@ -72,30 +124,4 @@ std::vector<Piece> Piece::getPiecesICanCapture(std::vector<Piece>* piecesCurrent
         delete validMoves;
         
         return piecesWeCanCapture;
-}
-
-int* Piece::convertStrIndexToBoardCords(int stringIdx) {
-    //0->63
-	//spit out (x, y)
-	
-	int x = 0;
-	int y = 0;
-
-	for (int i = 0; i < 63; i++) {
-		
-		if (i == stringIdx) {
-			break;
-		}
-		
-		x += 80;
-		
-		if (x > 560) {
-			x = 0;
-			y += 80;
-		}
-	}
-	int* cords = new int[2];
-	cords[0] = x;
-	cords[1] = y;
-	return cords;
 }

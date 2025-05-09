@@ -7,7 +7,7 @@ class Pawn : public Piece
 private:
     
 public:
-    Pawn(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString);
+    Pawn(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString, std::vector<Piece*>* piecesCurrentlyOnBoard);
     Pawn();
     ~Pawn();
     

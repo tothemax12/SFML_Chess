@@ -3,12 +3,15 @@
 #include <string>
 #include "Piece.h"
 #include "Pawn.h"
+#include <cmath>
+#include <fstream>
 
 class Board
 {
 private:
     sf::Texture* boardTexture;
     sf::Sprite boardSprite;
+    sf::Sprite highlightSquareSprite;
     std::string boardString;
     sf::Texture* wPawnTexture;
     sf::Texture* bPawnTexture;
@@ -27,7 +30,7 @@ public:
     //Pawn testPawn2;
     //Pawn testPawn2;
 
-    Board(sf::Texture* boardTexture, sf::Texture* wPawnTexture, sf::Texture* bPawnTexture);
+    Board(sf::Texture* boardTexture, sf::Texture* highlightedSquareTexture, sf::Texture* wPawnTexture, sf::Texture* bPawnTexture);
     ~Board();
     std::vector<Piece*>* initializePiecesOnBoardBasedOnBoardString();
 
@@ -38,4 +41,11 @@ public:
     
     void drawBoard(sf::RenderWindow* window);
     void drawPiecesCurrentlyOnBoard(sf::RenderWindow* window);
+    void drawHighlightedValidMoves(sf::RenderWindow* window, std::vector<int>* validMoves);
+
+    int* convertStrIndexToBoardCords(int stringIdx);
+    int convertBoardCordsToStringIndex(int x, int y);
+    bool inRange(int val, int low, int high);
+
+    void readInBoardFromFile();
 };
