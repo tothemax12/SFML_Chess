@@ -6,16 +6,17 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
+class Board;
+
 class Piece
 {
 public:
+    Board *board;
     char pieceIcon;
     int cord;
     bool isFirstTurn;
-    std::string* currentBoardString;
-    std::vector<Piece*>* piecesCurrentlyOnBoard; 
 
-    Piece(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString, std::vector<Piece*>* piecesCurrentlyOnBoard);
+    Piece(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
     ~Piece();
 
     sf::Texture pieceTexture;
@@ -28,8 +29,11 @@ public:
     //that put the king in check, and special moves
     virtual std::vector<int>* getValidMoves();
     std::vector<int>* removeLocationsNotOnBoard(std::vector<int>* validMoves);
-    virtual std::vector<int>* getCapturableSpaces();
-    std::vector<int>* getAllCapturableSpacesForAGiveSide(std::string sideThatIsCapturingPieces);
-    std::string* getAllPiecesThatCanBeCapturedBySide(std::string sideThatIsCapturingPieces);
-    std::vector<Piece> getPiecesICanCapture(std::vector<Piece>* piecesCurrentlyOnBoard);
+    virtual std::vector<int>* getMyCapturableSpaces();
+
+    void movePiece(int moveIndex, std::string* boardStrToChange);
+    bool isMoveValid(int moveCord);
+
+    bool onRightSideOfBoard(int cord);
+    bool onLeftSideOfBoard(int cord);
 };

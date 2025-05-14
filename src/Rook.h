@@ -2,19 +2,17 @@
 #include "Piece.h"
 #include <cctype>
 
-class Pawn : public Piece
+class Rook : public Piece
 {
 private:
     
 public:
-    Pawn(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
-    ~Pawn();
+    Rook(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
+    ~Rook();
     
     std::vector<int>* getBasicMoves() override;
-    //pawn is weird and can't capture forward
     std::vector<int>* getMyCapturableSpaces() override;
 
     std::vector<int>* getValidMoves() override;
-
     //void movePiece(int moveIndex, bool testMoveOnCopyBoard, std::string* boardStrToChange, std::vector<Piece*>* piecesVectToChange) override;
 };

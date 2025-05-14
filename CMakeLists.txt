@@ -22,6 +22,9 @@ src/Piece.cpp
 src/Pawn.h
 src/Pawn.cpp
 
+src/Rook.h
+src/Rook.cpp
+
 src/King.h
 src/King.cpp
 

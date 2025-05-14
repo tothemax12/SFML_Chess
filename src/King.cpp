@@ -1,7 +1,7 @@
 #include "King.h"
 
-King::King(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString, std::vector<Piece*>* piecesCurrentlyOnBoard) : 
-Piece(pieceIcon, cord, pieceTexture, currentBoardString, piecesCurrentlyOnBoard)
+King::King(Board* board, char pieceIcon, int cord, sf::Texture* pieceTexture) : 
+Piece(board, pieceIcon, cord, pieceTexture)
 {
 
 }
@@ -38,6 +38,6 @@ std::vector<int>* King::getValidMoves() {
     return validMoves;
 }
 
-std::vector<int>* King::getCapturableSpaces() {
+std::vector<int>* King::getMyCapturableSpaces() {
     return getBasicMoves();
 }

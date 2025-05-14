@@ -1,0 +1,15 @@
+Objectives for May 11th 2025:
+---------------------------------
+- Implement it so the pieces can get their capturable spaces on different boards (copy or real)
+
+Objectives for May 13th 2025:
+---------------------------------
+- finish implementing rook basic moves (check!)
+- test the validate move functionality and verify that the moves aren't valid
+when the move puts the king in danger
+- work on the checking if the special move for the pawn can be performed
+- work on changing the board to correctly perform the special move
+
+future next steps:
+- start working on king basic moves
+- also working on king's special move now that we have the rook
