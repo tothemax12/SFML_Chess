@@ -4,6 +4,7 @@
 #include "Piece.h"
 #include "Pawn.h"
 #include "Rook.h"
+#include "King.h"
 #include <cmath>
 #include <fstream>
 
@@ -15,11 +16,12 @@ private:
     sf::Sprite highlightSquareSprite;
 
     sf::Texture* wPawnTexture;
-    sf::Texture* wRookTexture; 
+    sf::Texture* wRookTexture;
+    sf::Texture* wKingTexture;
 
     sf::Texture* bPawnTexture;
     sf::Texture* bRookTexture;
-
+    sf::Texture* bKingTexture;
 
     // //piece definitions
     // Pawn testPawn1;
@@ -41,14 +43,16 @@ public:
     Board(sf::Texture* boardTexture, 
           sf::Texture* highlightedSquareTexture, 
           sf::Texture* wPawnTexture, 
-          sf::Texture* wRookTexture, 
+          sf::Texture* wRookTexture,
+          sf::Texture* wKingTexture, 
           sf::Texture* bPawnTexture, 
-          sf::Texture* bRookTexture);
+          sf::Texture* bRookTexture,
+          sf::Texture* bKingTexture);
     ~Board();
     void readInBoardFromFile();
     std::vector<Piece*>* initializePiecesOnBoardBasedOnBoardString(std::string boardString);
 
-    void printBoard();
+    void printBoard(std::string boardToPrint);
     void overWriteBoardAtLocation(int cord, char thingOnSpace);
     std::vector<Piece*>* getPiecesCurrentlyOnBoard();
     
@@ -61,13 +65,15 @@ public:
     bool inRange(int val, int low, int high);
 
     std::string* getBoardStr();
-    std::string* getBoardCopyStr();
-
     void setBoardStr(std::string strToAssign);
+
+    std::string* getBoardCopyStr();
     void setBoardCopyStr(std::string strToAssign);
-    
+    void setCopyPieceVect(std::vector<Piece*>* ptrToPieceVect);
+    std::vector<Piece*>* getCopyPieceVect();
+
     //takes in "Black" or "White" for team, and 0 (current real board), or 1 (copy board after a move was made) for which board to check
-    std::vector<int>* getAllCapturableSpacesForAGivenSide(std::string sideThatIsCapturingPieces, std::string whichBoardToCheck);
+    std::vector<int>* getAllCapturableSpacesForAGivenSide(std::string sideThatIsCapturingPieces, std::string boardToUse, std::vector<Piece*>* vectOfPiecesToUse);
 
     bool isKingCapturable(std::vector<int>* vectOfAllCapturableLocations, std::string sideThatIsCapturingPieces, std::string whichBoardToCheck);
 };

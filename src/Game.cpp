@@ -3,16 +3,21 @@
 
 Game::Game(sf::Texture* boardTexture, 
            sf::Texture* highlightedSquareTexture, 
-           sf::Texture *wPawnTexture, 
-           sf::Texture *wRookTexture, 
-           sf::Texture *bPawnTexture,
-           sf::Texture *bRookTexture) : 
+           sf::Texture* wPawnTexture, 
+           sf::Texture* wRookTexture,
+           sf::Texture* wKingTexture, 
+           sf::Texture* bPawnTexture,
+           sf::Texture* bRookTexture,
+           sf::Texture* bKingTexture) : 
 boardTexture(boardTexture),
 highlightedSquareTexture(highlightedSquareTexture), 
 wPawnTexture(wPawnTexture),
 wRookTexture(wRookTexture),
-bPawnTexture(bPawnTexture), 
-board(boardTexture, highlightedSquareTexture, wPawnTexture, wRookTexture, bPawnTexture, bRookTexture) 
+wKingTexture(wKingTexture),
+bPawnTexture(bPawnTexture),
+bRookTexture(bRookTexture),
+bKingTexture(bKingTexture), 
+board(boardTexture, highlightedSquareTexture, wPawnTexture, wRookTexture, wKingTexture, bPawnTexture, bRookTexture, bKingTexture) 
 {
     window = sf::RenderWindow(sf::VideoMode({640, 640}), "SFML works!");
 }
@@ -34,7 +39,7 @@ void Game::debugValidMoves() {
     std::vector<int> validMoves;
     std::vector<Piece*>* piecesCurrentlyOnBoard = board.getPiecesCurrentlyOnBoard();
     int* weirdCord = &piecesCurrentlyOnBoard->at(0)->cord;
-    std::vector<int>* currentCapturableSpacesForASide = board.getAllCapturableSpacesForAGivenSide("White", "Copy");
+    std::vector<int>* currentCapturableSpacesForASide = board.getAllCapturableSpacesForAGivenSide("White", *board.getBoardStr(), board.getPiecesCurrentlyOnBoard());
 
     while(true) {
         window.clear();
@@ -86,7 +91,7 @@ void Game::debugValidMoves() {
 
             validMoves = handleClick(mouseX, mouseY);
 
-            board.printBoard();
+            //board.printBoard(*board.getBoardStr());
         }
 
         // for (int i = 0; i < currentCapturableSpacesForASide->size(); i++)
@@ -113,7 +118,7 @@ void Game::debugValidMoves() {
 void Game::draw() {
     debugValidMoves();
 
-    board.printBoard();
+    board.printBoard(*board.getBoardStr());
     // std::vector<int>* validMoves = board.testPawn1.getValidMoves();
 
     // printf("valid moves: \n");
@@ -228,8 +233,8 @@ std::vector<int> Game::handleClick(int mouseX, int mouseY) {
         for (int i = 0; i < piecesValidMoves->size(); i++) {
             //if they clicked a valid move
             if (piecesValidMoves->at(i) == strIdxOfClick) {
-                //begin that pieces move procedure
-                clickedPiece->movePiece(piecesValidMoves->at(i), board.getBoardStr());
+                //begin that pieces move procedure (on the real board)
+                clickedPiece->movePiece(piecesValidMoves->at(i), board.getBoardStr(), board.getPiecesCurrentlyOnBoard(), false);
                 //printf("clicked a valid move location for the selected piece\n");
 
                 clickedPiece = nullptr;

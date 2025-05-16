@@ -12,7 +12,8 @@ public:
     
     std::vector<int>* getBasicMoves() override;
     //pawn is weird and can't capture forward
-    std::vector<int>* getMyCapturableSpaces() override;
+    std::vector<int>* getMyCapturableSpaces(std::string boardToCheck) override;
+    bool checkIfSpecialMoveCanBePreformed() override;
 
     std::vector<int>* getValidMoves() override;
 

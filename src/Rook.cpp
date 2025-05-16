@@ -85,9 +85,10 @@ std::vector<int>* Rook::getBasicMoves() {
     return basicMoves;
 }
 
-std::vector<int>* Rook::getMyCapturableSpaces() {
+std::vector<int>* Rook::getMyCapturableSpaces(std::string boardToCheck) {
     std::vector<int>* capturableMoves = new std::vector<int>;
-    std::string boardStr = *board->getBoardStr();
+    //std::string boardStr = *board->getBoardStr();
+    std::string boardStr = boardToCheck;
 
     if (this->pieceIcon == 'R') {
         //right direction, go to the right until it wraps back to the left
@@ -273,6 +274,10 @@ std::vector<int>* Rook::getMyCapturableSpaces() {
     return capturableMoves;
 }
 
+bool Rook::checkIfSpecialMoveCanBePreformed() {
+    return false;
+}
+
 std::vector<int>* Rook::getValidMoves() {
     //brainstorming...
     //also need to confirm they are on the board.
@@ -282,7 +287,8 @@ std::vector<int>* Rook::getValidMoves() {
     //also need to account for that.
     std::vector<int>* validMoves = new std::vector<int>;
     std::vector<int>* basicMoves = getBasicMoves();
-    std::vector<int>* capturableSpaces = getMyCapturableSpaces();
+    std::vector<int>* capturableSpaces = getMyCapturableSpaces(*board->getBoardStr());
+    bool isKingInDangerIfMoveWasPreformed = false;
 
     //printf("valid moves size: %d \n", validMoves->size());
     for (int i = 0; i < basicMoves->size(); i++)
@@ -305,6 +311,13 @@ std::vector<int>* Rook::getValidMoves() {
     }
 
     //need to remove the spaces that put the king in danger. that is not valid
+    for (int i = validMoves->size()-1; i > -1; i--)
+    {
+        isKingInDangerIfMoveWasPreformed = isMoveValid(validMoves->at(i), getMyTeamString());
+        if (isKingInDangerIfMoveWasPreformed) {
+            validMoves->erase(validMoves->begin()+i);
+        }
+    }
 
     return validMoves;
 }

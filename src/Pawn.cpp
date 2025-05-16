@@ -97,7 +97,7 @@ std::vector<int>* Pawn::getBasicMoves() {
 
 //getCapturableSpaces takes in a board string to be able to check other boards if a move to were
 //potentially be made
-std::vector<int>* Pawn::getMyCapturableSpaces() {
+std::vector<int>* Pawn::getMyCapturableSpaces(std::string boardToCheck) {
     std::vector<int>* capturableSpaces = new std::vector<int>;
     if (pieceIcon == 'P') {
         //ignore the right capturable square of pawn if on side of board
@@ -147,6 +147,23 @@ std::vector<int>* Pawn::getMyCapturableSpaces() {
     return capturableSpaces;
 }
 
+bool Pawn::checkIfSpecialMoveCanBePreformed() {
+    //en passant can be preformed if...
+    //-capturing piece has moved exactly 3 spaces forward
+        //keep a count of spaces the pawn moved 
+
+    //-captured pawn must have moved 2 spaces on it's first turn,
+    //landing right next to the capturing pawn
+        //track a bool if they chose to move 2 spaces
+        //captured pawn must be directly to the left or right of pawn
+
+    //-the en passant must be preformed by capturing pawn on the 
+    //turn right after the captured pawn moved
+        //???
+
+    return false;
+}
+
 std::vector<int>* Pawn::getValidMoves() {
     //brainstorming...
     //also need to confirm they are on the board.
@@ -156,7 +173,13 @@ std::vector<int>* Pawn::getValidMoves() {
     //also need to account for that.
     std::vector<int>* validMoves = new std::vector<int>;
     std::vector<int>* basicMoves = getBasicMoves();
-    std::vector<int>* capturableSpaces = getMyCapturableSpaces();
+    std::vector<int>* capturableSpaces = getMyCapturableSpaces(*board->getBoardStr());
+    bool isKingInDangerIfMoveWasPreformed = false;
+
+    //first check if we can even preform the special move,
+    //if we can, than calculate that space and put a negative on it
+    //to indicate it is a special move
+    
 
     //printf("valid moves size: %d \n", validMoves->size());
     for (int i = 0; i < basicMoves->size(); i++)
@@ -179,7 +202,14 @@ std::vector<int>* Pawn::getValidMoves() {
     }
 
     //need to remove the spaces that put the king in danger. that is not valid
-
+    for (int i = validMoves->size()-1; i > -1; i--)
+    {
+        isKingInDangerIfMoveWasPreformed = isMoveValid(validMoves->at(i), getMyTeamString());
+        if (isKingInDangerIfMoveWasPreformed) {
+            validMoves->erase(validMoves->begin()+i);
+        }
+    }
+    
     return validMoves;
 }
 

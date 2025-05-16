@@ -36,13 +36,17 @@ std::vector<int>* Piece::removeLocationsNotOnBoard(std::vector<int>* validMoves)
     return validMoves;
 }
 
-std::vector<int>* Piece::getMyCapturableSpaces() {
+std::vector<int>* Piece::getMyCapturableSpaces(std::string boardToCheck) {
     return nullptr;
 }
 
+bool Piece::checkIfSpecialMoveCanBePreformed() {
+    return false;
+}
 
 //modifies the pointed to board based on the move index
-void Piece::movePiece(int moveIndex, std::string* boardStrToChange) {
+//also need to modify the pieceVector as then we can get the capturable moves based on that
+void Piece::movePiece(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) {
     //positive cord, just a normal move piece or move and capture a piece
     //if (moveIndex >= 0) {
         //no capture involved, just moving the piece
@@ -50,22 +54,67 @@ void Piece::movePiece(int moveIndex, std::string* boardStrToChange) {
             boardStrToChange->at(this->cord) = '0';
             boardStrToChange->at(moveIndex) = this->pieceIcon;
 
-            //also need to update the piece vect
-            //but if I just change me, the piece vector points to me,
-            //so it will have the correct information
-            this->cord = moveIndex;
-            
-            //can't forget to update the sprites location as well
-            int* screenCords = board->convertStrIndexToBoardCords(this->cord);
-            this->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});            
-        } //else {//handle special move
 
-    // }
-    //}
+            if (isCopy) {//we are modifying the copy to preform the move
+                for (int i = 0; i < pieceVectorToChange->size(); i++)
+                {
+                 if (pieceVectorToChange->at(i)->cord == this->cord) {
+                    pieceVectorToChange->at(i)->cord = moveIndex;
+                 }   
+                }
+            } else {//real move, just change the real thing
+
+                //also need to update the piece vect
+                //but if I just change me, the piece vector points to me,
+                //so it will have the correct information
+                this->cord = moveIndex;
+                
+                //can't forget to update the sprites location as well
+                int* screenCords = board->convertStrIndexToBoardCords(this->cord);
+                this->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+            }
+
+        }  else if (boardStrToChange->at(moveIndex) != '0') {
+            //handling if a piece is going to capture another piece
+            boardStrToChange->at(this->cord) = '0';
+            boardStrToChange->at(moveIndex) = this->pieceIcon;
+
+            //same as just moving, but we need to remove the piece that was
+            //captured from the piece vect
+            std::vector<Piece*>* piecesCurrentlyOnBoard = pieceVectorToChange;
+            for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++)
+            {
+                if (piecesCurrentlyOnBoard->at(i)->cord == moveIndex) {
+                    piecesCurrentlyOnBoard->erase(piecesCurrentlyOnBoard->begin()+i);
+                    break;
+                }
+            }
+
+            if (isCopy) {//we are modifying the copy to preform the move
+                for (int i = 0; i < pieceVectorToChange->size(); i++)
+                {
+                 if (pieceVectorToChange->at(i)->cord == this->cord) {
+                    pieceVectorToChange->at(i)->cord = moveIndex;
+                 }   
+                }
+            } else {
+                //also need to update the piece vect
+                //but if I just change me, the piece vector points to me,
+                //so it will have the correct information
+                this->cord = moveIndex;
+                
+                
+                //can't forget to update the sprites location as well
+                int* screenCords = board->convertStrIndexToBoardCords(this->cord);
+                this->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+        }
+    }
 }
 
-bool Piece::isMoveValid(int moveCord) {
+bool Piece::isMoveValid(int moveCord, std::string whichTeam) {
     bool isKingInDangerUhOh = false;
+    std::vector<Piece*>* copyPieceVect;
+    std::string myOpponent = getOpponentsTeamString();
 
     //update the copy board string to the current games board so we can try
     //the move out and validate it
@@ -73,18 +122,37 @@ bool Piece::isMoveValid(int moveCord) {
     board->setBoardCopyStr(*board->getBoardStr());
 
     //init the copy piece vect based on the copyStr
-    board->initializePiecesOnBoardBasedOnBoardString(*board->getBoardCopyStr());
+    copyPieceVect = board->initializePiecesOnBoardBasedOnBoardString(*board->getBoardCopyStr());
+    board->setCopyPieceVect(copyPieceVect);
 
     //move the piece and modify the copy board
-    movePiece(moveCord, board->getBoardCopyStr());
+    movePiece(moveCord, board->getBoardCopyStr(), copyPieceVect, true);
+
+    std::cout << "Board str: \n";
+    board->printBoard(*board->getBoardStr());
+    printf("\n");
+
+    std::cout << "Board Copy str: \n";
+    board->printBoard(*board->getBoardCopyStr());
+    printf("\n");
 
     //get all the opponent teams capturable spaces
     //based on that copy board after move was made
-    std::vector<int>* allCapturableSpotsForOpponentAfterMove = board->getAllCapturableSpacesForAGivenSide("Black", "Copy");
+    std::vector<int>* allCapturableSpotsForOpponentAfterMove = board->getAllCapturableSpacesForAGivenSide(myOpponent, *board->getBoardCopyStr(), board->getCopyPieceVect());
+
+    std::cout << "\ncapturable spaces on copy board after move:  " << "\n";
+    for (int i = 0; i < allCapturableSpotsForOpponentAfterMove->size(); i++)
+    {
+        std::cout << allCapturableSpotsForOpponentAfterMove->at(i);
+    }
+    printf("\n");
 
     //need to see if the king is in that list
-    isKingInDangerUhOh = board->isKingCapturable(allCapturableSpotsForOpponentAfterMove, "Black", "Copy");
+    isKingInDangerUhOh = board->isKingCapturable(allCapturableSpotsForOpponentAfterMove, myOpponent, *board->getBoardStr());
     
+    std::cout << "king in danger: " << isKingInDangerUhOh << "\n";
+    std::cout << "when I go to: " << moveCord << "\n";
+
     return isKingInDangerUhOh;
 }
 
@@ -94,4 +162,14 @@ bool Piece::onRightSideOfBoard(int cord) {
 
 bool Piece::onLeftSideOfBoard(int cord) {
     return (cord == 0 || !(cord % 8));
+}
+
+std::string Piece::getMyTeamString() {
+    std::string myTeam;
+    return islower(this->pieceIcon) ? myTeam = "Black" : myTeam = "White";
+}
+
+std::string Piece::getOpponentsTeamString() {
+    std::string opponent;
+    return islower(this->pieceIcon) ? opponent = "White" : opponent = "Black";
 }

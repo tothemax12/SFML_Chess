@@ -3,16 +3,20 @@
 Board::Board(sf::Texture* boardTexture, 
             sf::Texture* highlightedSquareTexture, 
             sf::Texture* wPawnTexture, 
-            sf::Texture* wRookTexture, 
+            sf::Texture* wRookTexture,
+            sf::Texture* wKingTexture, 
             sf::Texture* bPawnTexture, 
-            sf::Texture* bRookTexture) : 
+            sf::Texture* bRookTexture,
+            sf::Texture* bKingTexture) : 
 boardTexture(boardTexture),
 boardSprite(*boardTexture),
 highlightSquareSprite(*highlightedSquareTexture),
 wPawnTexture(wPawnTexture),
 wRookTexture(wRookTexture),
+wKingTexture(wKingTexture),
 bPawnTexture(bPawnTexture),
-bRookTexture(bRookTexture) 
+bRookTexture(bRookTexture),
+bKingTexture(bKingTexture) 
 //testPawn1('P', 47, wPawnTexture, &boardString),
 //testPawn2('p', 31, bPawnTexture, &boardString)
 {
@@ -109,6 +113,23 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
 
                 piecesOnTheBoard->emplace_back(newRook);
             }
+            if(boardString[i] == 'K') {
+                King* newKing = new King(this, 'K', i, wKingTexture);
+                
+                //set the cord based on the index in the string arr
+                screenCords = convertStrIndexToBoardCords(newKing->cord);
+                newKing->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+                
+                piecesOnTheBoard->emplace_back(newKing);
+            }
+            if(boardString[i] == 'k') {
+                King* newKing = new King(this, 'k', i, bKingTexture);
+
+                screenCords = convertStrIndexToBoardCords(newKing->cord);
+                newKing->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+
+                piecesOnTheBoard->emplace_back(newKing);
+            }
             //end rook init------------------------------------------------------------------------
         }
     }
@@ -116,12 +137,12 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
     return piecesOnTheBoard;
 }
 
-void Board::printBoard() {
-    for(int i = 0; i < boardString.size(); i++) {
+void Board::printBoard(std::string boardToPrint) {
+    for(int i = 0; i < boardToPrint.size(); i++) {
         if (!(i%8) && (i != 0)) {
             printf("\n");
         }
-        printf("%c ", boardString[i]);
+        printf("%c ", boardToPrint[i]);
     }
 }
 
@@ -190,15 +211,15 @@ bool Board::inRange(int val, int low, int high) {
     return (val >= low && val <= high);    
 }
 
-std::vector<int>* Board::getAllCapturableSpacesForAGivenSide(std::string sideThatIsCapturingPieces, std::string whichBoardToCheck) {
+std::vector<int>* Board::getAllCapturableSpacesForAGivenSide(std::string sideThatIsCapturingPieces, std::string boardToUse, std::vector<Piece*>* vectOfPiecesToUse) {
     std::vector<int>* allSpacesOfPiecesThatCanBeCaptured = new std::vector<int>;
     std::vector<int>* currentPiecesCapturableSpaces;
-        
+    std::vector<Piece*>* vectorOfRelaventPieces = vectOfPiecesToUse;
     if (sideThatIsCapturingPieces == "White") {
-        for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++) {
+        for (int i = 0; i < vectorOfRelaventPieces->size(); i++) {
             //if there is a white piece, get the spaces it is currently able to capture
-            if (isupper(piecesCurrentlyOnBoard->at(i)->pieceIcon)) {
-                currentPiecesCapturableSpaces = piecesCurrentlyOnBoard->at(i)->getMyCapturableSpaces();
+            if (isupper(vectorOfRelaventPieces->at(i)->pieceIcon)) {
+                currentPiecesCapturableSpaces = vectorOfRelaventPieces->at(i)->getMyCapturableSpaces(boardToUse);
                 printf("size of currentPiecesCapturableSpaces: %d\n", currentPiecesCapturableSpaces->size());
                 for (int j = 0; j < currentPiecesCapturableSpaces->size(); j++)
                 {
@@ -207,10 +228,10 @@ std::vector<int>* Board::getAllCapturableSpacesForAGivenSide(std::string sideTha
             }
         }
     } else if (sideThatIsCapturingPieces == "Black") {
-        for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++) {
+        for (int i = 0; i < vectorOfRelaventPieces->size(); i++) {
             //if there is a black piece, get the spaces it is currently able to capture
-            if (!isupper(piecesCurrentlyOnBoard->at(i)->pieceIcon)) {
-                currentPiecesCapturableSpaces = piecesCurrentlyOnBoard->at(i)->getMyCapturableSpaces();
+            if (!isupper(vectorOfRelaventPieces->at(i)->pieceIcon)) {
+                currentPiecesCapturableSpaces = vectorOfRelaventPieces->at(i)->getMyCapturableSpaces(boardToUse);
                 for (int j = 0; j < currentPiecesCapturableSpaces->size(); j++)
                 {
                     allSpacesOfPiecesThatCanBeCaptured->push_back(currentPiecesCapturableSpaces->at(j));
@@ -224,27 +245,28 @@ std::vector<int>* Board::getAllCapturableSpacesForAGivenSide(std::string sideTha
 
 bool Board::isKingCapturable(std::vector<int>* vectOfAllCapturableLocations, std::string sideThatIsCapturingPieces, std::string whichBoardToCheck) {
     
-    std::string boardStrToCheck;
-    if (whichBoardToCheck == "Real") {
-        boardStrToCheck.assign(this->boardString);
-    } else if (whichBoardToCheck == "Copy") {
-        boardStrToCheck.assign(this->copyofBoardStringAfterMoveWasMade);
-    }
+    std::string boardStrToCheck = whichBoardToCheck;
+    // if (whichBoardToCheck == "Real") {
+    //     boardStrToCheck.assign(this->boardString);
+    // } else if (whichBoardToCheck == "Copy") {
+    //     boardStrToCheck.assign(this->copyofBoardStringAfterMoveWasMade);
+    // }
     
     
     std::string strOfCapturablePieceIcons;
     if (sideThatIsCapturingPieces == "Black") {
         for (int i = 0; i < vectOfAllCapturableLocations->size(); i++)
         {
-           if (islower(boardStrToCheck[vectOfAllCapturableLocations->at(i)])) {
-            strOfCapturablePieceIcons+=vectOfAllCapturableLocations->at(i);
+            //if there is a white piece that can be captured, store it's pieceIcon
+           if (isupper(boardStrToCheck[vectOfAllCapturableLocations->at(i)])) {
+            strOfCapturablePieceIcons+=boardStrToCheck[vectOfAllCapturableLocations->at(i)];
            }
         }
     } else if (sideThatIsCapturingPieces == "White") {
         for (int i = 0; i < vectOfAllCapturableLocations->size(); i++)
         {
-           if (isupper(boardStrToCheck[vectOfAllCapturableLocations->at(i)])) {
-            strOfCapturablePieceIcons+=vectOfAllCapturableLocations->at(i);
+           if (islower(boardStrToCheck[vectOfAllCapturableLocations->at(i)])) {
+            strOfCapturablePieceIcons+=boardStrToCheck[vectOfAllCapturableLocations->at(i)];
            }
         }
     }
@@ -272,14 +294,22 @@ std::string* Board::getBoardStr() {
     return &boardString;
 }
 
-std::string* Board::getBoardCopyStr() {
-    return &copyofBoardStringAfterMoveWasMade;
-}
-
 void Board::setBoardStr(std::string strToAssign) {
     boardString.assign(strToAssign);
 }
 
+std::string* Board::getBoardCopyStr() {
+    return &copyofBoardStringAfterMoveWasMade;
+}
+
 void Board::setBoardCopyStr(std::string strToAssign) {
     copyofBoardStringAfterMoveWasMade.assign(strToAssign);
+}
+
+void Board::setCopyPieceVect(std::vector<Piece*>* ptrToPieceVect) {
+    copyOfPiecesAfterMoveWasMade = ptrToPieceVect;
+}
+
+std::vector<Piece*>* Board::getCopyPieceVect() {
+    return copyOfPiecesAfterMoveWasMade;
 }

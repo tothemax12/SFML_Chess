@@ -1,3 +1,4 @@
+#pragma once
 #include "Piece.h"
 //#include "Game.h"
 
@@ -10,6 +11,8 @@ public:
     ~King();
     
     std::vector<int>* getBasicMoves() override;
+    std::vector<int>* getMyCapturableSpaces(std::string boardToCheck) override;
+    bool checkIfSpecialMoveCanBePreformed() override;
+
     std::vector<int>* getValidMoves() override;
-    std::vector<int>* getMyCapturableSpaces() override;
 };

@@ -29,11 +29,15 @@ public:
     //that put the king in check, and special moves
     virtual std::vector<int>* getValidMoves();
     std::vector<int>* removeLocationsNotOnBoard(std::vector<int>* validMoves);
-    virtual std::vector<int>* getMyCapturableSpaces();
+    virtual std::vector<int>* getMyCapturableSpaces(std::string boardToCheck);
+    virtual bool checkIfSpecialMoveCanBePreformed();
 
-    void movePiece(int moveIndex, std::string* boardStrToChange);
-    bool isMoveValid(int moveCord);
+    void movePiece(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy);
+    bool isMoveValid(int moveCord, std::string whichTeam);
 
     bool onRightSideOfBoard(int cord);
     bool onLeftSideOfBoard(int cord);
+
+    std::string getMyTeamString();
+    std::string getOpponentsTeamString();
 };
