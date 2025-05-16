@@ -76,4 +76,5 @@ public:
     std::vector<int>* getAllCapturableSpacesForAGivenSide(std::string sideThatIsCapturingPieces, std::string boardToUse, std::vector<Piece*>* vectOfPiecesToUse);
 
     bool isKingCapturable(std::vector<int>* vectOfAllCapturableLocations, std::string sideThatIsCapturingPieces, std::string whichBoardToCheck);
+    bool sideIsInCheckMate(std::string side);
 };

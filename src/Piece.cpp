@@ -128,30 +128,30 @@ bool Piece::isMoveValid(int moveCord, std::string whichTeam) {
     //move the piece and modify the copy board
     movePiece(moveCord, board->getBoardCopyStr(), copyPieceVect, true);
 
-    std::cout << "Board str: \n";
-    board->printBoard(*board->getBoardStr());
-    printf("\n");
+    // std::cout << "Board str: \n";
+    // board->printBoard(*board->getBoardStr());
+    // printf("\n");
 
-    std::cout << "Board Copy str: \n";
-    board->printBoard(*board->getBoardCopyStr());
-    printf("\n");
+    // std::cout << "Board Copy str: \n";
+    // board->printBoard(*board->getBoardCopyStr());
+    // printf("\n");
 
     //get all the opponent teams capturable spaces
     //based on that copy board after move was made
     std::vector<int>* allCapturableSpotsForOpponentAfterMove = board->getAllCapturableSpacesForAGivenSide(myOpponent, *board->getBoardCopyStr(), board->getCopyPieceVect());
 
-    std::cout << "\ncapturable spaces on copy board after move:  " << "\n";
-    for (int i = 0; i < allCapturableSpotsForOpponentAfterMove->size(); i++)
-    {
-        std::cout << allCapturableSpotsForOpponentAfterMove->at(i);
-    }
-    printf("\n");
+    // std::cout << "\ncapturable spaces on copy board after move:  " << "\n";
+    // for (int i = 0; i < allCapturableSpotsForOpponentAfterMove->size(); i++)
+    // {
+    //     std::cout << allCapturableSpotsForOpponentAfterMove->at(i);
+    // }
+    // printf("\n");
 
     //need to see if the king is in that list
-    isKingInDangerUhOh = board->isKingCapturable(allCapturableSpotsForOpponentAfterMove, myOpponent, *board->getBoardStr());
+    isKingInDangerUhOh = board->isKingCapturable(allCapturableSpotsForOpponentAfterMove, myOpponent, *board->getBoardCopyStr());
     
-    std::cout << "king in danger: " << isKingInDangerUhOh << "\n";
-    std::cout << "when I go to: " << moveCord << "\n";
+    //std::cout << "king in danger: " << isKingInDangerUhOh << "\n";
+    //std::cout << "when I go to: " << moveCord << "\n";
 
     return isKingInDangerUhOh;
 }

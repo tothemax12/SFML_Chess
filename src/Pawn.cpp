@@ -98,38 +98,43 @@ std::vector<int>* Pawn::getBasicMoves() {
 //getCapturableSpaces takes in a board string to be able to check other boards if a move to were
 //potentially be made
 std::vector<int>* Pawn::getMyCapturableSpaces(std::string boardToCheck) {
+    // std::cout << "Board pawn is seeing when capturing: \n\n";
+    // board->printBoard(boardToCheck);
+    // std::cout << "\nend board pawn is seeing: \n\n";
+
     std::vector<int>* capturableSpaces = new std::vector<int>;
     if (pieceIcon == 'P') {
         //ignore the right capturable square of pawn if on side of board
         if (!(cord == 7 || cord == 15 || cord == 23 || cord == 31 || cord == 39 || cord == 47 || cord == 55 || cord == 63)) {
             //if it's also a white piece ignore it
-            if (((cord-7) >= 0 && (cord-7) <= 63) && !isupper(board->getBoardStr()->at(cord-7))) {
+            if (((cord-7) >= 0 && (cord-7) <= 63) && !isupper(boardToCheck.at(cord-7))) {
                 capturableSpaces->push_back(cord-7);
             }
         }
         //if a pawn is on the right side of board, ignore the left one
         if (cord != 0 && cord % 8) {
-            if (((cord-9) >= 0 && (cord-9) <= 63) && !isupper(board->getBoardStr()->at(cord-9))) {
+            if (((cord-9) >= 0 && (cord-9) <= 63) && !isupper(boardToCheck.at(cord-9))) {
                 capturableSpaces->push_back(cord-9);
             }
         }
     } else {
         //if they are on the sides, do not add the val that goes off the board
         if (cord != 0 && cord % 8) {
-            if (((cord+7) >= 0 && (cord+7) <= 63) && isupper(board->getBoardStr()->at(cord+7))) {
+            if (((cord+7) >= 0 && (cord+7) <= 63) && isupper(boardToCheck.at(cord+7))) {
                 capturableSpaces->push_back(cord+7);
             }
         }
             //if black pawn is on the right side of board, ignore the right capturable space cord
         if (!(cord == 7 || cord == 15 || cord == 23 || cord == 31 || cord == 39 || cord == 47 || cord == 55 || cord == 63)) {
-            if (((cord+9) >= 0 && (cord+9) <= 63) && isupper(board->getBoardStr()->at(cord+9))) {
+            if (((cord+9) >= 0 && (cord+9) <= 63) && boardToCheck.at(cord+9)) {
                 capturableSpaces->push_back(cord+9);
             }
         }
     }
 
     //can't capture stuff if nothing is there
-    std::string currentBoard = *board->getBoardStr();
+    //std::string currentBoard = *board->getBoardStr();
+    std::string currentBoard = boardToCheck;
     for (int i = 0; i < capturableSpaces->size(); i++) {
         if (currentBoard[capturableSpaces->at(i)] == '0') {
             capturableSpaces->at(i) = -1;

@@ -16,7 +16,6 @@ sf::Texture bPawnTexture;
 sf::Texture bRookTexture;
 sf::Texture bKingTexture;
 
-
 int main() {
     //int check = boardTexture.loadFromFile("//res//chess_board.png");
     //works int check1 = boardTexture.loadFromFile("/home/max/SFML_Chess/src/chess_board.png");

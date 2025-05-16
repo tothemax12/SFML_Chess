@@ -220,7 +220,7 @@ std::vector<int>* Board::getAllCapturableSpacesForAGivenSide(std::string sideTha
             //if there is a white piece, get the spaces it is currently able to capture
             if (isupper(vectorOfRelaventPieces->at(i)->pieceIcon)) {
                 currentPiecesCapturableSpaces = vectorOfRelaventPieces->at(i)->getMyCapturableSpaces(boardToUse);
-                printf("size of currentPiecesCapturableSpaces: %d\n", currentPiecesCapturableSpaces->size());
+                //printf("size of currentPiecesCapturableSpaces: %d\n", currentPiecesCapturableSpaces->size());
                 for (int j = 0; j < currentPiecesCapturableSpaces->size(); j++)
                 {
                     allSpacesOfPiecesThatCanBeCaptured->push_back(currentPiecesCapturableSpaces->at(j));
@@ -312,4 +312,36 @@ void Board::setCopyPieceVect(std::vector<Piece*>* ptrToPieceVect) {
 
 std::vector<Piece*>* Board::getCopyPieceVect() {
     return copyOfPiecesAfterMoveWasMade;
+}
+
+bool Board::sideIsInCheckMate(std::string side) {
+    //so at a high level, a team is in checkmate if there is
+    //no move that a team can make that will result in the king not
+    //not being in danger
+
+    //go through all the pieces on the side trying to get out of check (potentially checkmate)
+    //for each piece, get there current valid moves; we worked it out so that if a move results
+    //in the king being in danger the move is not valid and not added to the list.
+    
+    //so if the list of ALL valid moves for every piece on a side is empty then we are in checkmate.
+    std::vector<int> allValidMovesForASide;
+    std::vector<int> currentPiecesValidMoves;
+    bool isInCheckmate = false;
+    std::string currentPiecesTeam;
+    for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++)
+    {
+        currentPiecesTeam = piecesCurrentlyOnBoard->at(i)->getMyTeamString();
+        if (currentPiecesTeam == side) {
+            currentPiecesValidMoves = *piecesCurrentlyOnBoard->at(i)->getValidMoves();
+            for (int j = 0; j < currentPiecesValidMoves.size(); j++) {
+                allValidMovesForASide.push_back(currentPiecesValidMoves.at(j));
+            }
+        }
+    }
+    
+    if (allValidMovesForASide.size() == 0) {
+        isInCheckmate = true;
+    }
+
+    return isInCheckmate;
 }

@@ -105,6 +105,11 @@ void Game::debugValidMoves() {
         //     //board.drawHighlightedValidMoves(&window, currentCapturableSpacesForASide);
         // }
         board.drawHighlightedValidMoves(&window, &validMoves);
+        
+        bool sideIsInCheckMate = false;
+        sideIsInCheckMate = board.sideIsInCheckMate("White");
+        std::cout << "White is in checkmate: " << sideIsInCheckMate << "\n";
+        
         window.display();
 
         mouseX = -1;
