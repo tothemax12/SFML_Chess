@@ -14,7 +14,7 @@ public:
     Board *board;
     char pieceIcon;
     int cord;
-    bool isFirstTurn;
+    bool hasNotMoved;
 
     Piece(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
     ~Piece();
@@ -30,7 +30,8 @@ public:
     virtual std::vector<int>* getValidMoves();
     std::vector<int>* removeLocationsNotOnBoard(std::vector<int>* validMoves);
     virtual std::vector<int>* getMyCapturableSpaces(std::string boardToCheck);
-    virtual bool checkIfSpecialMoveCanBePreformed();
+    virtual std::vector<int>* getSpecialMoves();
+    virtual void preformSpecialMove(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy);
 
     void movePiece(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy);
     bool isMoveValid(int moveCord, std::string whichTeam);

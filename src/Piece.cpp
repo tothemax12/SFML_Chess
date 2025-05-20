@@ -6,7 +6,7 @@ pieceSprite(*pieceTexture)
 {
 	this->pieceIcon = pieceIcon;
 	this->cord = cord;
-	this->isFirstTurn = true;
+	this->hasNotMoved = true;
     this->board = board;
     //scale down the piece sprite a bit
     //pieceSprite.setScale({.4, .4});
@@ -40,15 +40,20 @@ std::vector<int>* Piece::getMyCapturableSpaces(std::string boardToCheck) {
     return nullptr;
 }
 
-bool Piece::checkIfSpecialMoveCanBePreformed() {
-    return false;
+std::vector<int>* Piece::getSpecialMoves() {
+    return nullptr;
 }
+
+void Piece::preformSpecialMove(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) {
+
+}
+
 
 //modifies the pointed to board based on the move index
 //also need to modify the pieceVector as then we can get the capturable moves based on that
 void Piece::movePiece(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) {
     //positive cord, just a normal move piece or move and capture a piece
-    //if (moveIndex >= 0) {
+    if (moveIndex >= 0) {
         //no capture involved, just moving the piece
         if (boardStrToChange->at(moveIndex) == '0') {
             boardStrToChange->at(this->cord) = '0';
@@ -72,6 +77,15 @@ void Piece::movePiece(int moveIndex, std::string* boardStrToChange, std::vector<
                 //can't forget to update the sprites location as well
                 int* screenCords = board->convertStrIndexToBoardCords(this->cord);
                 this->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+
+                //remember to update the pieces stuff
+                this->hasNotMoved = false;
+
+                //if this piece is a pawn and we just moved to the end of
+                //the board, we need to promote the pawn, I think we can do it here
+                if (this->pieceIcon == 'P' || this->pieceIcon == 'p' && (board->inRange(this->cord, 0, 7) || board->inRange(this->cord, 56, 63))) {
+                    board->pawnPromotionState.drawLoop(this, board->getBoardStr());
+                }
             }
 
         }  else if (boardStrToChange->at(moveIndex) != '0') {
@@ -107,7 +121,23 @@ void Piece::movePiece(int moveIndex, std::string* boardStrToChange, std::vector<
                 //can't forget to update the sprites location as well
                 int* screenCords = board->convertStrIndexToBoardCords(this->cord);
                 this->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+
+
+                //remember to update the pieces stuff
+                this->hasNotMoved = false;
+
+                //if this piece is a pawn and we just moved to the end of
+                //the board, we need to promote the pawn, I think we can do it here
+                if (this->pieceIcon == 'P' || this->pieceIcon == 'p' && (board->inRange(this->cord, 0, 7) || board->inRange(this->cord, 56, 63))) {
+                    board->pawnPromotionState.drawLoop(this, board->getBoardStr());
+                }
+            }
         }
+    } else {
+        //move was < 0, handle special move seperately
+        this->preformSpecialMove(moveIndex, boardStrToChange, pieceVectorToChange, isCopy);
+        board->printBoard(*board->getBoardStr());
+        printf("\n");
     }
 }
 

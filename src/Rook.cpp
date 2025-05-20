@@ -274,8 +274,12 @@ std::vector<int>* Rook::getMyCapturableSpaces(std::string boardToCheck) {
     return capturableMoves;
 }
 
-bool Rook::checkIfSpecialMoveCanBePreformed() {
-    return false;
+std::vector<int>* Rook::getSpecialMoves() {
+    return nullptr;
+}
+
+void Rook::preformSpecialMove(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) {
+    
 }
 
 std::vector<int>* Rook::getValidMoves() {

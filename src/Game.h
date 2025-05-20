@@ -17,7 +17,6 @@ private:
     sf::Texture* bRookTexture;
     sf::Texture* bKingTexture;
     
-
 public:
     Game(sf::Texture* boardTexture, sf::Texture* highlightedSquareTexture, sf::Texture* wPawnTexture, sf::Texture *wRookTexture, sf::Texture* wKingTexture, sf::Texture* bPawnTexture, sf::Texture *bRookTexture, sf::Texture* bKingTexture);
     ~Game();
@@ -27,4 +26,6 @@ public:
     std::vector<int> getValidMovesForClickedSpace(int mouseX, int mouseY);
     Piece* getPieceThatWasClicked(int mouseX, int mouseY);
     std::vector<int> handleClick(int mouseX, int mouseY);
+
+    bool whiteTurn = true;
 };

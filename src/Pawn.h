@@ -9,11 +9,17 @@ private:
 public:
     Pawn(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
     ~Pawn();
+
+    //flags related to special moves
+    bool iMovedTwoSpacesOfMyFirstTurn = false;
+    bool iMovedThreeSpacesForward = false;
     
     std::vector<int>* getBasicMoves() override;
     //pawn is weird and can't capture forward
     std::vector<int>* getMyCapturableSpaces(std::string boardToCheck) override;
-    bool checkIfSpecialMoveCanBePreformed() override;
+    
+    void preformSpecialMove(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) override;
+    std::vector<int>* getSpecialMoves() override;
 
     std::vector<int>* getValidMoves() override;
 

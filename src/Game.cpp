@@ -16,14 +16,16 @@ wRookTexture(wRookTexture),
 wKingTexture(wKingTexture),
 bPawnTexture(bPawnTexture),
 bRookTexture(bRookTexture),
-bKingTexture(bKingTexture), 
-board(boardTexture, highlightedSquareTexture, wPawnTexture, wRookTexture, wKingTexture, bPawnTexture, bRookTexture, bKingTexture) 
+bKingTexture(bKingTexture),
+window(sf::RenderWindow(sf::VideoMode({640, 640}), "SFML works!")),
+board(boardTexture, highlightedSquareTexture, wPawnTexture, wRookTexture, wKingTexture, bPawnTexture, bRookTexture, bKingTexture, &(this->window))
 {
-    window = sf::RenderWindow(sf::VideoMode({640, 640}), "SFML works!");
+    //window = sf::RenderWindow(sf::VideoMode({640, 640}), "SFML works!");
 }
 
 Game::~Game()
 {
+
 }
 
 //need a visual tool to debug the spaces (validMoves) the pieces can move or I am going
@@ -69,25 +71,6 @@ void Game::debugValidMoves() {
         }
 
         if (mouseX > -1 && mouseY > -1) {
-            //get validMoves of clicked piece
-            // for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++) {
-            //     printf("icon of pieces in array: %c\n", piecesCurrentlyOnBoard->at(i)->pieceIcon);
-            //     printf("cord of pieces in array: %d\n", piecesCurrentlyOnBoard->at(i)->cord);
-            // }
-
-            // for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++) {
-            //     //std::cout << "i: " << i << "\n";
-            //     //std::cout << "ith piece cord: " << piecesCurrentlyOnBoard->at(i)->cord << "\n";
-            //     //if there is a piece at the clicked square print the valid moves it can make
-            //     if (piecesCurrentlyOnBoard->at(i)->cord == strIndex) {
-
-            //         validMoves = piecesCurrentlyOnBoard->at(i)->getValidMoves();
-            //         std::cout << "valid moves for " << piecesCurrentlyOnBoard->at(i)->pieceIcon << " :\n";
-            //         for (int j = 0; j < validMoves->size(); j++) {
-            //             std::cout << validMoves->at(j) << "\n";
-            //         }
-            //     }
-            // }
 
             validMoves = handleClick(mouseX, mouseY);
 
@@ -141,54 +124,6 @@ void Game::draw() {
     }
 }
 
-
-//when a click happens
-
-//if a piece was not already clicked:
-
-//What if we have a method that solely returns the validMoves 
-//of a space when a click happens. If that space was empty return an
-//empty list.
-
-//t
-
-
-
-
-
-// std::vector<int> Game::getValidMovesForClickedSpace(int mouseX, int mouseY) {
-//     std::vector<int>* blankValidMoves;
-//     std::vector<int>* validMovesOfClickedSpace;
-//     int strIdxOfClick = board.convertBoardCordsToStringIndex(mouseX, mouseY);
-//     std::vector<Piece*>* piecesCurrentlyOnBoard = board.getPiecesCurrentlyOnBoard();
-
-//     bool pieceWasClicked = false;
-//     for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++) {
-//         //std::cout << "i: " << i << "\n";
-//         //std::cout << "ith piece cord: " << piecesCurrentlyOnBoard->at(i)->cord << "\n";
-//         //if there is a piece at the clicked square print the valid moves it can make
-//         if (piecesCurrentlyOnBoard->at(i)->cord == strIdxOfClick) {
-//             pieceWasClicked = true;
-
-//             validMovesOfClickedSpace = piecesCurrentlyOnBoard->at(i)->getValidMoves();
-
-//             std::cout << "valid moves for " << piecesCurrentlyOnBoard->at(i)->pieceIcon << " :\n";
-//             for (int j = 0; j < validMovesOfClickedSpace->size(); j++) {
-//                 std::cout << validMovesOfClickedSpace->at(j) << "\n";
-//             }
-
-//             //hit the piece we clicked, we are done
-//             break;
-//         }
-//     }
-
-//     if (!pieceWasClicked) {
-//         validMovesOfClickedSpace = blankValidMoves;
-//     }
-
-//     return *validMovesOfClickedSpace;
-// }
-
 //returns a pointer to a piece to the piece of the click
 //if the user clicked a blank space return nullptr
 Piece* Game::getPieceThatWasClicked(int mouseX, int mouseY) {
@@ -222,6 +157,7 @@ std::vector<int> Game::handleClick(int mouseX, int mouseY) {
     static Piece* clickedPiece = nullptr;
     std::vector<int>* clickedPiecesValidMoves;
     int strIdxOfClick = board.convertBoardCordsToStringIndex(mouseX, mouseY);
+    int displayedValidMove;
 
     //if a piece was previously clicked see if they clicked one of it's valid moves
     if (clickedPiece != nullptr) {
@@ -237,7 +173,12 @@ std::vector<int> Game::handleClick(int mouseX, int mouseY) {
         
         for (int i = 0; i < piecesValidMoves->size(); i++) {
             //if they clicked a valid move
-            if (piecesValidMoves->at(i) == strIdxOfClick) {
+
+            //might be negative for a special move
+            displayedValidMove = abs(piecesValidMoves->at(i));
+            if (displayedValidMove == strIdxOfClick) {
+                //clickedPiece->movePiece(piecesValidMoves->at(i), board.getBoardStr(), board.getPiecesCurrentlyOnBoard(), false);
+
                 //begin that pieces move procedure (on the real board)
                 clickedPiece->movePiece(piecesValidMoves->at(i), board.getBoardStr(), board.getPiecesCurrentlyOnBoard(), false);
                 //printf("clicked a valid move location for the selected piece\n");

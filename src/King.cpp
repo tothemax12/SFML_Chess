@@ -193,15 +193,220 @@ std::vector<int>* King::getMyCapturableSpaces(std::string boardToCheck) {
     return capturableSpaces;
 }
 
-bool King::checkIfSpecialMoveCanBePreformed() {
+//determines if the king can castle and returns the negative of the cords it will
+//end up at
+std::vector<int>* King::getSpecialMoves() {
     //check if it can castle
-    return false;
+
+    //the king can castle to the left or right if...
+    //1. the king and the rook it is going to castle with
+    //haven't moved. 
+    //2. there are no pieces between the king and the rook
+    //it is going to castle with
+
+    std::vector<int>* specialMoves = new std::vector<int>;
+    std::string boardStr = *board->getBoardStr();
+    std::vector<Piece*> pieceVect = *board->getPiecesCurrentlyOnBoard();
+    bool canCastleLeft = false;
+    bool canCastleRight = false;
+
+    specialMoves->push_back(-1);
+    specialMoves->push_back(-1);
+
+    // bool correctIcon;
+    // bool spacesAreEmpty;
+    // bool pieceIsRook;
+    // bool pieceIsFourToTheLeft;
+    // bool rookHasNotMoved;
+
+    //if we haven't moved
+    if (this->hasNotMoved) {
+        for (int i = 0; i < pieceVect.size(); i++) {
+
+            // correctIcon = pieceVect.at(i)->pieceIcon == 'R';
+            // pieceIsFourToTheLeft = pieceVect.at(i)->cord == this->cord-4;
+            // rookHasNotMoved = pieceVect.at(i)->hasNotMoved;
+
+            if (
+                isupper(pieceVect.at(i)->pieceIcon) &&
+                pieceVect.at(i)->pieceIcon == 'R' && 
+                pieceVect.at(i)->cord == this->cord-4 && 
+                pieceVect.at(i)->hasNotMoved &&
+                boardStr.at(this->cord-1) == '0' &&
+                boardStr.at(this->cord-2) == '0' &&
+                boardStr.at(this->cord-3) == '0') {
+
+                canCastleLeft = true;
+            }
+
+            if (
+                isupper(pieceVect.at(i)->pieceIcon) &&
+                pieceVect.at(i)->pieceIcon == 'R' && 
+                pieceVect.at(i)->cord == this->cord+3 && 
+                pieceVect.at(i)->hasNotMoved &&
+                boardStr.at(this->cord+1) == '0' &&
+                boardStr.at(this->cord+2) == '0') {
+        
+                canCastleRight = true;
+            }
+
+            if (
+                islower(pieceVect.at(i)->pieceIcon) &&
+                pieceVect.at(i)->pieceIcon == 'r' && 
+                pieceVect.at(i)->cord == this->cord-4 && 
+                pieceVect.at(i)->hasNotMoved &&
+                boardStr.at(this->cord-1) == '0' &&
+                boardStr.at(this->cord-2) == '0' &&
+                boardStr.at(this->cord-3) == '0') {
+
+                canCastleLeft = true;
+            }
+
+            if (
+                islower(pieceVect.at(i)->pieceIcon) &&
+                pieceVect.at(i)->pieceIcon == 'r' && 
+                pieceVect.at(i)->cord == this->cord+3 && 
+                pieceVect.at(i)->hasNotMoved &&
+                boardStr.at(this->cord+1) == '0' &&
+                boardStr.at(this->cord+2) == '0') {
+        
+                canCastleRight = true;
+            }
+        }
+    
+        //these work for black or white king
+        if (canCastleLeft) {
+            specialMoves->at(0) = -1*(this->cord - 2);
+        }
+        
+        if (canCastleRight) {
+            specialMoves->at(1) = -1*(this->cord + 2);
+        }
+
+        //need to process the locations a bit different here
+        //we will mark the specials by -cord to indicate that a special move will
+        //be preformed
+        for (int i = specialMoves->size()-1; i > -1; i--)
+        {
+            if (specialMoves->at(i) == -1) {
+                specialMoves->erase(specialMoves->begin()+i);
+            }
+        }
+    }
+
+    for (int i = specialMoves->size()-1; i > -1; i--)
+    {
+        if (specialMoves->at(i) == -1) {
+            specialMoves->erase(specialMoves->begin()+i);
+        }
+    }
+
+    return specialMoves;
+}
+
+void King::preformSpecialMove(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) {
+    int realMoveCord = -1*moveIndex;
+    std::string myTeam = getMyTeamString();
+
+    Piece* kingToUpdate;
+    Piece* rookToUpdate;
+    Piece* currentPiece;
+    int* screenCords;
+    bool leftCastle = false;
+    bool rightCastle = false;
+
+    if (realMoveCord == 62 || realMoveCord == 6) {
+        rightCastle = true;
+    }
+
+    if (realMoveCord == 58 || realMoveCord == 2) {
+        leftCastle = true;
+    }
+
+    //only can move to 62 or 58 for white and for black
+        //modifying the string-----------------------------
+
+        //remove king
+        boardStrToChange->at(this->cord) = '0';
+
+        if (rightCastle) {//preform right castle
+            //move king
+            boardStrToChange->at(this->cord+2) = this->pieceIcon;
+        } else if (leftCastle) {
+            boardStrToChange->at(this->cord-2) = this->pieceIcon;
+        }
+
+        //put rook in new spot
+        if (myTeam == "White") {
+            if (rightCastle) {
+                boardStrToChange->at(this->cord+1) = 'R';
+            } else if (leftCastle) {
+                boardStrToChange->at(this->cord-1) = 'R';
+            }
+        } else {
+            if (rightCastle) {
+                boardStrToChange->at(this->cord+1) = 'r';
+            } else if (leftCastle) {
+                boardStrToChange->at(this->cord-1) = 'r';   
+            }
+        }
+
+        //overwrite old rook spot
+        if (rightCastle) {
+            boardStrToChange->at(this->cord+3) = '0';
+        } else if (leftCastle) {
+            boardStrToChange->at(this->cord-4) = '0';
+        }
+        // board->printBoard(*boardStrToChange);
+        // printf("\n");
+        //end of string modification-----------------------------------------------------
+
+
+        //update the king and rook cord/sprites------------------------------------------
+        for (int i = 0; i < pieceVectorToChange->size(); i++)
+        {
+            currentPiece = pieceVectorToChange->at(i);
+            if (currentPiece->cord == this->cord) {
+                kingToUpdate = currentPiece;
+            }
+            
+            if (rightCastle) {
+                if (currentPiece->cord == this->cord+3) {
+                    rookToUpdate = currentPiece;
+                }
+            } else if (leftCastle) {
+                if (currentPiece->cord == this->cord-4) {
+                    rookToUpdate = currentPiece;
+                }
+            }
+        }
+        
+        if (rightCastle) {
+            rookToUpdate->cord = this->cord + 1;
+        } else if (leftCastle) {
+            rookToUpdate->cord = this->cord - 1;
+        }
+        screenCords = board->convertStrIndexToBoardCords(rookToUpdate->cord);
+        rookToUpdate->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+        rookToUpdate->hasNotMoved = false;
+
+        if (rightCastle) {
+            kingToUpdate->cord = this->cord + 2;
+        } else if (leftCastle) {
+            kingToUpdate->cord = this->cord - 2;
+        }
+        screenCords = board->convertStrIndexToBoardCords(kingToUpdate->cord);
+        kingToUpdate->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+        kingToUpdate->hasNotMoved = false;
+        //end of sprite updating----------------------------------------------------------
 }
 
 std::vector<int>* King::getValidMoves() {
     std::vector<int>* validMoves = new std::vector<int>;
     std::vector<int>* basicMoves = getBasicMoves();
     std::vector<int>* capturableSpaces = getMyCapturableSpaces(*board->getBoardStr());    
+    std::vector<int>* specialMoves = getSpecialMoves();
+    
     bool isKingInDangerIfMoveWasPreformed = false;
 
     for (int i = 0; i < basicMoves->size(); i++)
@@ -214,6 +419,15 @@ std::vector<int>* King::getValidMoves() {
         validMoves->emplace_back(capturableSpaces->at(i));
     }
 
+    printf("special moves:\n");
+    for (int i = 0; i < specialMoves->size(); i++)
+    {
+        printf("%d", specialMoves->at(i));
+        validMoves->emplace_back(specialMoves->at(i));
+    }
+    printf("\n\n");
+
+
     //need to remove the spaces that put the king in danger. that is not valid
     for (int i = validMoves->size()-1; i > -1; i--)
     {
@@ -222,6 +436,13 @@ std::vector<int>* King::getValidMoves() {
             validMoves->erase(validMoves->begin()+i);
         }
     }
+
+    printf("total valid moves:\n");
+    for (int i = 0; i < validMoves->size(); i++)
+    {
+        printf("%d ", validMoves->at(i));
+    }
+    printf("\n\n");
 
     return validMoves;
 }

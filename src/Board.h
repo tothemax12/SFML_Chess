@@ -8,6 +8,26 @@
 #include <cmath>
 #include <fstream>
 
+class PawnPromotionState {
+
+    public:
+        bool pieceNotSelected;
+
+        //Piece Menu Textures and Sprites
+        sf::Texture pawnPromotionMenuTexture;
+        sf::Sprite pawnPromotionMenuSprite;
+
+        sf::RenderWindow* window;
+        Board* board;
+
+        PawnPromotionState(Board* board, sf::Texture* pawnPromotionMenuTexture);
+        ~PawnPromotionState();
+
+        Piece* getInstanceOfSelectedPiece(int selectedPieceCord, Piece* pieceToChange);
+        int handleClickPawnPromotionState(int clickX, int clickY);
+        void drawLoop(Piece* pawnBeingChanged, std::string* boardStrToChange);
+};
+
 class Board
 {
 private:
@@ -34,6 +54,7 @@ private:
     std::vector<Piece*>* copyOfPiecesAfterMoveWasMade; 
     std::string copyofBoardStringAfterMoveWasMade;
 
+
 public:
     //piece definitions
     //Pawn testPawn1;
@@ -47,7 +68,8 @@ public:
           sf::Texture* wKingTexture, 
           sf::Texture* bPawnTexture, 
           sf::Texture* bRookTexture,
-          sf::Texture* bKingTexture);
+          sf::Texture* bKingTexture,
+          sf::RenderWindow* window);
     ~Board();
     void readInBoardFromFile();
     std::vector<Piece*>* initializePiecesOnBoardBasedOnBoardString(std::string boardString);
@@ -77,4 +99,9 @@ public:
 
     bool isKingCapturable(std::vector<int>* vectOfAllCapturableLocations, std::string sideThatIsCapturingPieces, std::string whichBoardToCheck);
     bool sideIsInCheckMate(std::string side);
+
+    sf::Texture* getPieceTexture(std::string pieceName, bool isOnWhiteTeam);
+
+    sf::RenderWindow* window;
+    PawnPromotionState pawnPromotionState;
 };

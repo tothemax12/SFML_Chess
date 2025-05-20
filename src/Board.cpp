@@ -1,5 +1,125 @@
 #include "Board.h"
 
+PawnPromotionState::PawnPromotionState(Board* board, sf::Texture* pawnPromotionMenuTexture) :
+pawnPromotionMenuTexture(*pawnPromotionMenuTexture),
+pawnPromotionMenuSprite(pawnPromotionMenuSprite),
+board(board)
+{
+    pieceNotSelected = true;
+}
+
+PawnPromotionState::~PawnPromotionState() {
+
+}
+
+Piece* PawnPromotionState::getInstanceOfSelectedPiece(int selectedPieceCord, Piece* pieceToChange) {
+    Piece* pieceToReturn = nullptr;
+    switch (selectedPieceCord)
+    {
+    case 26:
+        //pieceToReturn = new Pawn();
+        break;
+    case 27:
+        break;
+    case 28:
+        break;
+    case 29:
+        break;
+    default:
+        break;
+    }
+
+    return pieceToReturn;
+}
+
+
+int PawnPromotionState::handleClickPawnPromotionState(int clickX, int clickY) {
+    int strIdxOfClickedPiece = -1;
+    int strIdxOfClick = 0;
+
+    strIdxOfClick = board->convertBoardCordsToStringIndex(clickX, clickY);
+    if (strIdxOfClick == 26 ||
+        strIdxOfClick == 27 ||
+        strIdxOfClick == 28 ||
+        strIdxOfClick == 29) {
+            strIdxOfClickedPiece = strIdxOfClick;
+        }
+
+    // switch (strIdxOfClick) {
+    //     case 26:
+
+    // }
+    return strIdxOfClickedPiece;
+}
+
+void PawnPromotionState::drawLoop(Piece* pawnBeingChanged, std::string* boardStrToChange) {
+    int mouseX = -1;
+    int mouseY = -1;
+    int clickedPieceCord = -1;
+    Piece* pieceSelected = nullptr;
+    
+    while (pieceNotSelected) {
+        board->window->clear();
+        board->drawBoard(board->window);
+        board->drawPiecesCurrentlyOnBoard(board->window);
+
+        //handle input
+        while (const std::optional event = board->window->pollEvent())
+        {
+            if (event->is<sf::Event::Closed>())
+            {
+                board->window->close();
+            }
+            else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+                    board->window->close();
+            } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+                mouseX = mouseButtonPressed->position.x;
+                mouseY = mouseButtonPressed->position.y;
+
+                std::cout << "Mouse cords " << mouseX << " " << mouseY << "\n";
+                std::cout << "String index " << clickedPieceCord << "\n";
+                //clickedPieceCord = board->convertBoardCordsToStringIndex(mouseX, mouseY);
+                //printf("%d", strIndex);
+            }
+        }
+
+        if (mouseX > -1 && mouseY > -1) {
+            clickedPieceCord = handleClickPawnPromotionState(mouseX, mouseY);
+            if (clickedPieceCord != -1) {
+                pieceSelected = getInstanceOfSelectedPiece(clickedPieceCord, pawnBeingChanged);
+
+                //overwrite stuff
+
+                //put selection on the board by overwriting pawn
+                //Rook* newRook = new Rook(this, 'R', i, wRookTexture);
+                if (isupper(pawnBeingChanged->pieceIcon)) {
+                    delete pawnBeingChanged;
+
+                    //printf('pawn cord: %d', )
+                    Piece* newRook = new Rook(board, 'R', pawnBeingChanged->cord, board->getPieceTexture("Rook", true));
+                    
+                    pawnBeingChanged = newRook;
+                    
+                    board->overWriteBoardAtLocation(pawnBeingChanged->cord, pawnBeingChanged->pieceIcon);
+
+                    //draw the new piece to the window
+                    //board->drawPiecesCurrentlyOnBoard(board->window);
+                }
+
+                pieceNotSelected = false;
+            }
+
+        }
+
+        //display the correct piece selection menu based on team
+
+    }
+
+    pieceNotSelected = true;
+}
+
 Board::Board(sf::Texture* boardTexture, 
             sf::Texture* highlightedSquareTexture, 
             sf::Texture* wPawnTexture, 
@@ -7,7 +127,8 @@ Board::Board(sf::Texture* boardTexture,
             sf::Texture* wKingTexture, 
             sf::Texture* bPawnTexture, 
             sf::Texture* bRookTexture,
-            sf::Texture* bKingTexture) : 
+            sf::Texture* bKingTexture,
+            sf::RenderWindow* window) : 
 boardTexture(boardTexture),
 boardSprite(*boardTexture),
 highlightSquareSprite(*highlightedSquareTexture),
@@ -16,7 +137,9 @@ wRookTexture(wRookTexture),
 wKingTexture(wKingTexture),
 bPawnTexture(bPawnTexture),
 bRookTexture(bRookTexture),
-bKingTexture(bKingTexture) 
+bKingTexture(bKingTexture),
+window(window),
+pawnPromotionState(this, bPawnTexture) 
 //testPawn1('P', 47, wPawnTexture, &boardString),
 //testPawn2('p', 31, bPawnTexture, &boardString)
 {
@@ -49,6 +172,8 @@ bKingTexture(bKingTexture)
     
     //piecesCurrentlyOnBoard.emplace_back(testPawn1);
     //piecesCurrentlyOnBoard.emplace_back(testPawn2);
+
+    //pawnPromotionState = PawnPromotionState(window, this, bPawnTexture);
 }
 
 Board::~Board()
@@ -167,8 +292,13 @@ void Board::drawPiecesCurrentlyOnBoard(sf::RenderWindow* window) {
 void Board::drawHighlightedValidMoves(sf::RenderWindow* window, std::vector<int>* validMoves) {
     int* screenCords;
     for (int i = 0; i < validMoves->size(); i++) {
+        //draw the special moves for the player too
+        if (validMoves->at(i) < 0) {
+            screenCords = convertStrIndexToBoardCords(-1*validMoves->at(i));
+        } else {
         //get cords
-        screenCords = convertStrIndexToBoardCords(validMoves->at(i));
+            screenCords = convertStrIndexToBoardCords(validMoves->at(i));
+        }
         highlightSquareSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
         window->draw(highlightSquareSprite);
     }
@@ -344,4 +474,10 @@ bool Board::sideIsInCheckMate(std::string side) {
     }
 
     return isInCheckmate;
+}
+
+sf::Texture* Board::getPieceTexture(std::string pieceName, bool isOnWhiteTeam) {
+    if(pieceName == "Rook") {
+        return wRookTexture;
+    }
 }

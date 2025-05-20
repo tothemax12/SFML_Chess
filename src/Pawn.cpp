@@ -21,7 +21,7 @@ std::vector<int>* Pawn::getBasicMoves() {
         offset = -8;
     }
     
-    if (isFirstTurn) {
+    if (hasNotMoved) {
         validMoves->push_back(cord+offset);
         validMoves->push_back(cord+2*offset);
     } else {
@@ -152,7 +152,7 @@ std::vector<int>* Pawn::getMyCapturableSpaces(std::string boardToCheck) {
     return capturableSpaces;
 }
 
-bool Pawn::checkIfSpecialMoveCanBePreformed() {
+std::vector<int>* Pawn::getSpecialMoves() {
     //en passant can be preformed if...
     //-capturing piece has moved exactly 3 spaces forward
         //keep a count of spaces the pawn moved 
@@ -166,7 +166,11 @@ bool Pawn::checkIfSpecialMoveCanBePreformed() {
     //turn right after the captured pawn moved
         //???
 
-    return false;
+    return nullptr;
+}
+
+void Pawn::preformSpecialMove(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) {
+
 }
 
 std::vector<int>* Pawn::getValidMoves() {
