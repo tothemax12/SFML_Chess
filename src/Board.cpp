@@ -102,11 +102,33 @@ void PawnPromotionState::drawLoop(Piece* pawnBeingChanged, std::string* boardStr
                     
                     pawnBeingChanged = newRook;
                     
+                    //int* cords = board->convertStrIndexToBoardCords(newRook->cord);
+                    //newRook->pieceSprite.setPosition({(float)cords[0], (float)cords[1]});
+
                     board->overWriteBoardAtLocation(pawnBeingChanged->cord, pawnBeingChanged->pieceIcon);
 
+                    int* newSpritePosition = board->convertStrIndexToBoardCords(pawnBeingChanged->cord);
+                    pawnBeingChanged->pieceSprite.setPosition({(float)newSpritePosition[0],(float)newSpritePosition[1]});
                     //draw the new piece to the window
                     //board->drawPiecesCurrentlyOnBoard(board->window);
-                }
+                 } else if (islower(pawnBeingChanged->pieceIcon)) {
+                    delete pawnBeingChanged;
+
+                    //printf('pawn cord: %d', )
+                    Piece* newRook = new Rook(board, 'r', pawnBeingChanged->cord, board->getPieceTexture("Rook", true));
+                    
+                    pawnBeingChanged = newRook;
+                    
+                    //int* cords = board->convertStrIndexToBoardCords(newRook->cord);
+                    //newRook->pieceSprite.setPosition({(float)cords[0], (float)cords[1]});
+
+                    board->overWriteBoardAtLocation(pawnBeingChanged->cord, pawnBeingChanged->pieceIcon);
+
+                    int* newSpritePosition = board->convertStrIndexToBoardCords(pawnBeingChanged->cord);
+                    pawnBeingChanged->pieceSprite.setPosition({(float)newSpritePosition[0],(float)newSpritePosition[1]});
+                    //draw the new piece to the window
+                    //board->drawPiecesCurrentlyOnBoard(board->window);
+                 }
 
                 pieceNotSelected = false;
             }

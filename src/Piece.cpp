@@ -83,7 +83,7 @@ void Piece::movePiece(int moveIndex, std::string* boardStrToChange, std::vector<
 
                 //if this piece is a pawn and we just moved to the end of
                 //the board, we need to promote the pawn, I think we can do it here
-                if (this->pieceIcon == 'P' || this->pieceIcon == 'p' && (board->inRange(this->cord, 0, 7) || board->inRange(this->cord, 56, 63))) {
+                if ((this->pieceIcon == 'P' && board->inRange(this->cord, 0, 7)) || (this->pieceIcon == 'p' && (board->inRange(this->cord, 56, 63)))) {
                     board->pawnPromotionState.drawLoop(this, board->getBoardStr());
                 }
             }
@@ -128,7 +128,7 @@ void Piece::movePiece(int moveIndex, std::string* boardStrToChange, std::vector<
 
                 //if this piece is a pawn and we just moved to the end of
                 //the board, we need to promote the pawn, I think we can do it here
-                if (this->pieceIcon == 'P' || this->pieceIcon == 'p' && (board->inRange(this->cord, 0, 7) || board->inRange(this->cord, 56, 63))) {
+                if ((this->pieceIcon == 'P' && board->inRange(this->cord, 0, 7)) || (this->pieceIcon == 'p' && (board->inRange(this->cord, 56, 63)))) {
                     board->pawnPromotionState.drawLoop(this, board->getBoardStr());
                 }
             }

@@ -11,8 +11,9 @@ public:
     ~Pawn();
 
     //flags related to special moves
-    bool iMovedTwoSpacesOfMyFirstTurn = false;
-    bool iMovedThreeSpacesForward = false;
+    bool iMovedTwoSpacesOfMyFirstTurn = true;
+    bool iMovedTwoSpacesLastTurn = true;
+    bool iMovedThreeSpacesForward = true;
     
     std::vector<int>* getBasicMoves() override;
     //pawn is weird and can't capture forward
