@@ -126,7 +126,7 @@ std::vector<int>* Pawn::getMyCapturableSpaces(std::string boardToCheck) {
         }
             //if black pawn is on the right side of board, ignore the right capturable space cord
         if (!(cord == 7 || cord == 15 || cord == 23 || cord == 31 || cord == 39 || cord == 47 || cord == 55 || cord == 63)) {
-            if (((cord+9) >= 0 && (cord+9) <= 63) && boardToCheck.at(cord+9)) {
+            if (((cord+9) >= 0 && (cord+9) <= 63) && isupper(boardToCheck.at(cord+9))) {
                 capturableSpaces->push_back(cord+9);
             }
         }
@@ -153,9 +153,6 @@ std::vector<int>* Pawn::getMyCapturableSpaces(std::string boardToCheck) {
 }
 
 std::vector<int>* Pawn::getSpecialMoves() {
-    //NEED TO VERIFY THAT A PIECE IS NOT WHERE I WILL LAND
-    //I CAN'T DO IT IF A PIECE IS BLOCKING MY LANDING
-
     //well to start, I could only do en passant if
     //there is a piece immediately to my left or right.
     std::string boardString = *board->getBoardStr();
@@ -190,10 +187,10 @@ std::vector<int>* Pawn::getSpecialMoves() {
     int rightCord = -1;
     leftCord = specialMoves->at(0);
     rightCord = specialMoves->at(1);
-    if ((isWhitePiece && leftCord != -1 && boardString.at(leftCord) == 'p') ||
-        (isWhitePiece && rightCord != -1 && boardString.at(rightCord) == 'p')||
-        (!isWhitePiece && leftCord != -1 && boardString.at(leftCord) == 'P')||
-        (!isWhitePiece && rightCord != -1 && boardString.at(rightCord) == 'P')) {
+    if ((isWhitePiece && leftCord != -1 && boardString.at(leftCord) == 'p' && boardString.at(leftCord-8) == '0') ||
+        (isWhitePiece && rightCord != -1 && boardString.at(rightCord) == 'p' && boardString.at(rightCord-8) == '0')||
+        (!isWhitePiece && leftCord != -1 && boardString.at(leftCord) == 'P' && boardString.at(leftCord+8) == '0')||
+        (!isWhitePiece && rightCord != -1 && boardString.at(rightCord) == 'P' && boardString.at(rightCord+8) == '0')) {
             if (this->iMovedThreeSpacesForward) {
 
                 //get info from potential piece we will capture
@@ -290,12 +287,12 @@ void Pawn::preformSpecialMove(int moveIndex, std::string* boardStrToChange, std:
         
     //update the piece that captured's data
     pawnToUpdate->cord = myNewCord;
-        
+
     int* screenCords = board->convertStrIndexToBoardCords(pawnToUpdate->cord);
     pawnToUpdate->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
 
     printf("board after special move: \n\n");
-    board->printBoard(*board->getBoardStr());
+    board->printBoard(*boardStrToChange);
     printf("\nend board print\n\n");
 }
 
@@ -338,6 +335,14 @@ std::vector<int>* Pawn::getValidMoves() {
         //printf("valid moves size: %d \n", validMoves->size());
     }
 
+        printf("special moves: \n");
+    for (int i = 0; i < specialMoves->size(); i++)
+    {
+        printf("%d ", specialMoves->at(i));
+        validMoves->emplace_back(specialMoves->at(i));        
+    }
+    printf("end of special moves: \n");
+
     //need to remove the spaces that put the king in danger. that is not valid
     for (int i = validMoves->size()-1; i > -1; i--)
     {
@@ -346,14 +351,6 @@ std::vector<int>* Pawn::getValidMoves() {
             validMoves->erase(validMoves->begin()+i);
         }
     }
-
-    printf("special moves: \n");
-    for (int i = 0; i < specialMoves->size(); i++)
-    {
-        printf("%d ", specialMoves->at(i));
-        validMoves->emplace_back(specialMoves->at(i));        
-    }
-    printf("end of special moves: \n");
     
     return validMoves;
 }

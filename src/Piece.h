@@ -41,4 +41,5 @@ public:
 
     std::string getMyTeamString();
     std::string getOpponentsTeamString();
+    bool opponentIsOnSpace(char boardSpace);
 };

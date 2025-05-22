@@ -203,3 +203,17 @@ std::string Piece::getOpponentsTeamString() {
     std::string opponent;
     return islower(this->pieceIcon) ? opponent = "White" : opponent = "Black";
 }
+
+bool Piece::opponentIsOnSpace(char boardSpace) {
+    bool isOpponent = false;
+
+    if (boardSpace != '0' && isupper(this->pieceIcon) && islower(boardSpace)) {
+        isOpponent = true;
+    }
+
+    if (boardSpace != '0' && islower(this->pieceIcon) && isupper(boardSpace)) {
+        isOpponent = true;
+    }
+
+    return isOpponent;
+}

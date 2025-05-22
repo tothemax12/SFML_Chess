@@ -5,6 +5,9 @@
 #include "Pawn.h"
 #include "Rook.h"
 #include "King.h"
+#include "Queen.h"
+#include "Knight.h"
+#include "Bishop.h"
 #include <cmath>
 #include <fstream>
 
@@ -14,13 +17,14 @@ class PawnPromotionState {
         bool pieceNotSelected;
 
         //Piece Menu Textures and Sprites
-        sf::Texture pawnPromotionMenuTexture;
+        sf::Texture wPawnPromotionMenuTexture;
+        sf::Texture bPawnPromotionMenuTexture;
         sf::Sprite pawnPromotionMenuSprite;
 
         sf::RenderWindow* window;
         Board* board;
 
-        PawnPromotionState(Board* board, sf::Texture* pawnPromotionMenuTexture);
+        PawnPromotionState(Board* board, sf::Texture* bPawnPromotionMenuTexture, sf::Texture* wPawnPromotionMenuTexture);
         ~PawnPromotionState();
 
         Piece* getInstanceOfSelectedPiece(int selectedPieceCord, Piece* pieceToChange);
@@ -38,10 +42,18 @@ private:
     sf::Texture* wPawnTexture;
     sf::Texture* wRookTexture;
     sf::Texture* wKingTexture;
+    sf::Texture* wQueenTexture;
+    sf::Texture* wKnightTexture;
+    sf::Texture* wBishopTexture;
+    sf::Texture* wPawnPromotionMenuTexture; 
 
     sf::Texture* bPawnTexture;
     sf::Texture* bRookTexture;
     sf::Texture* bKingTexture;
+    sf::Texture* bQueenTexture;
+    sf::Texture* bKnightTexture;
+    sf::Texture* bBishopTexture;
+    sf::Texture* bPawnPromotionMenuTexture;
 
     // //piece definitions
     // Pawn testPawn1;
@@ -65,10 +77,18 @@ public:
           sf::Texture* highlightedSquareTexture, 
           sf::Texture* wPawnTexture, 
           sf::Texture* wRookTexture,
-          sf::Texture* wKingTexture, 
+          sf::Texture* wKingTexture,
+          sf::Texture* wQueenTexture, 
+          sf::Texture* wKnightTexture,
+          sf::Texture* wBishopTexture,
+          sf::Texture* wPawnPromotionMenuTexture,
           sf::Texture* bPawnTexture, 
           sf::Texture* bRookTexture,
           sf::Texture* bKingTexture,
+          sf::Texture* bQueenTexture,
+          sf::Texture* bKnightTexture,
+          sf::Texture* bBishopTexture,
+          sf::Texture* bPawnPromotionMenuTexture,
           sf::RenderWindow* window);
     ~Board();
     void readInBoardFromFile();

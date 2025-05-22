@@ -12,13 +12,36 @@ private:
     sf::Texture* wPawnTexture;
     sf::Texture* wRookTexture;
     sf::Texture* wKingTexture;
+    sf::Texture* wQueenTexture;
+    sf::Texture* wKnightTexture;
+    sf::Texture* wBishopTexture;
+    sf::Texture* wPawnPromotionMenuTexture;
 
     sf::Texture* bPawnTexture;
     sf::Texture* bRookTexture;
     sf::Texture* bKingTexture;
-    
+    sf::Texture* bQueenTexture;
+    sf::Texture* bKnightTexture;
+    sf::Texture* bBishopTexture;
+    sf::Texture* bPawnPromotionMenuTexture;
+
 public:
-    Game(sf::Texture* boardTexture, sf::Texture* highlightedSquareTexture, sf::Texture* wPawnTexture, sf::Texture *wRookTexture, sf::Texture* wKingTexture, sf::Texture* bPawnTexture, sf::Texture *bRookTexture, sf::Texture* bKingTexture);
+    Game(sf::Texture* boardTexture, 
+         sf::Texture* highlightedSquareTexture, 
+         sf::Texture* wPawnTexture, 
+         sf::Texture* wRookTexture, 
+         sf::Texture* wKingTexture, 
+         sf::Texture* wQueenTexture,
+         sf::Texture* wKnightTexture,
+         sf::Texture* wBishopTexture,
+         sf::Texture* wPawnPromotionMenuTexture,
+         sf::Texture* bPawnTexture, 
+         sf::Texture* bRookTexture, 
+         sf::Texture* bKingTexture, 
+         sf::Texture* bQueenTexture,
+         sf::Texture* bKnightTexture,
+         sf::Texture* bBishopTexture,
+         sf::Texture* bPawnPromotionMenuTexture);
     ~Game();
     void debugValidMoves();
     void draw();

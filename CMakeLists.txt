@@ -28,6 +28,15 @@ src/Rook.cpp
 src/King.h
 src/King.cpp
 
+src/Queen.h
+src/Queen.cpp
+
+src/Knight.h
+src/Knight.cpp
+
+src/Bishop.h
+src/Bishop.cpp
+
 src/Board.h
 src/Board.cpp
 )

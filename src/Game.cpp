@@ -2,23 +2,55 @@
 #include <iostream>
 
 Game::Game(sf::Texture* boardTexture, 
-           sf::Texture* highlightedSquareTexture, 
-           sf::Texture* wPawnTexture, 
-           sf::Texture* wRookTexture,
-           sf::Texture* wKingTexture, 
-           sf::Texture* bPawnTexture,
-           sf::Texture* bRookTexture,
-           sf::Texture* bKingTexture) : 
+         sf::Texture* highlightedSquareTexture, 
+         sf::Texture* wPawnTexture, 
+         sf::Texture* wRookTexture, 
+         sf::Texture* wKingTexture, 
+         sf::Texture* wQueenTexture,
+         sf::Texture* wKnightTexture,
+         sf::Texture* wBishopTexture,
+         sf::Texture* wPawnPromotionMenuTexture,
+         sf::Texture* bPawnTexture, 
+         sf::Texture* bRookTexture, 
+         sf::Texture* bKingTexture, 
+         sf::Texture* bQueenTexture,
+         sf::Texture* bKnightTexture,
+         sf::Texture* bBishopTexture,
+         sf::Texture* bPawnPromotionMenuTexture) : 
 boardTexture(boardTexture),
 highlightedSquareTexture(highlightedSquareTexture), 
 wPawnTexture(wPawnTexture),
 wRookTexture(wRookTexture),
 wKingTexture(wKingTexture),
+wQueenTexture(wQueenTexture),
+wKnightTexture(wKnightTexture),
+wBishopTexture(wBishopTexture),
+wPawnPromotionMenuTexture(wPawnPromotionMenuTexture),
 bPawnTexture(bPawnTexture),
 bRookTexture(bRookTexture),
 bKingTexture(bKingTexture),
+bQueenTexture(bQueenTexture),
+bKnightTexture(bKnightTexture),
+bBishopTexture(bBishopTexture),
+bPawnPromotionMenuTexture(bPawnPromotionMenuTexture),
 window(sf::RenderWindow(sf::VideoMode({640, 640}), "SFML works!")),
-board(boardTexture, highlightedSquareTexture, wPawnTexture, wRookTexture, wKingTexture, bPawnTexture, bRookTexture, bKingTexture, &(this->window))
+board(boardTexture, 
+      highlightedSquareTexture, 
+      wPawnTexture, 
+      wRookTexture, 
+      wKingTexture, 
+      wQueenTexture,
+      wKnightTexture,
+      wBishopTexture,
+      wPawnPromotionMenuTexture, 
+      bPawnTexture, 
+      bRookTexture, 
+      bKingTexture, 
+      bQueenTexture,
+      bKnightTexture,
+      bBishopTexture,
+      bPawnPromotionMenuTexture, 
+      &(this->window))
 {
     //window = sf::RenderWindow(sf::VideoMode({640, 640}), "SFML works!");
 }
@@ -185,6 +217,7 @@ std::vector<int> Game::handleClick(int mouseX, int mouseY) {
 
                 clickedPiece = nullptr;
                 validMovesToReturn = emptyListOfValidMoves;
+                //return validMovesToReturn;
             }
         }
         //if they didn't click a valid move,

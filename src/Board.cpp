@@ -1,11 +1,13 @@
 #include "Board.h"
 
-PawnPromotionState::PawnPromotionState(Board* board, sf::Texture* pawnPromotionMenuTexture) :
-pawnPromotionMenuTexture(*pawnPromotionMenuTexture),
-pawnPromotionMenuSprite(pawnPromotionMenuSprite),
+PawnPromotionState::PawnPromotionState(Board* board, sf::Texture* bPawnPromotionMenuTexture, sf::Texture* wPawnPromotionMenuTexture) :
+wPawnPromotionMenuTexture(*wPawnPromotionMenuTexture),
+bPawnPromotionMenuTexture(*bPawnPromotionMenuTexture),
+pawnPromotionMenuSprite(*wPawnPromotionMenuTexture),
 board(board)
 {
     pieceNotSelected = true;
+    pawnPromotionMenuSprite.setPosition({(float)160, (float)240});
 }
 
 PawnPromotionState::~PawnPromotionState() {
@@ -14,16 +16,44 @@ PawnPromotionState::~PawnPromotionState() {
 
 Piece* PawnPromotionState::getInstanceOfSelectedPiece(int selectedPieceCord, Piece* pieceToChange) {
     Piece* pieceToReturn = nullptr;
+    bool onWhiteTeam = isupper(pieceToChange->pieceIcon);
     switch (selectedPieceCord)
     {
     case 26:
-        //pieceToReturn = new Pawn();
+        if (onWhiteTeam) {
+            Bishop* newBishop = new Bishop(board, 'B', pieceToChange->cord, board->getPieceTexture("Bishop", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Bishop*>(newBishop);
+        } else {
+            Bishop* newBishop = new Bishop(board, 'b', pieceToChange->cord, board->getPieceTexture("Bishop", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Bishop*>(newBishop);
+        }
         break;
     case 27:
+        if (onWhiteTeam) {
+            Knight* newKnight = new Knight(board, 'K', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Knight*>(newKnight);
+        } else {
+            Knight* newKnight = new Knight(board, 'k', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Knight*>(newKnight);
+        }
         break;
     case 28:
+        if (onWhiteTeam) {
+            Rook* newRook = new Rook(board, 'R', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Rook*>(newRook);
+        } else {
+            Rook* newRook = new Rook(board, 'r', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Rook*>(newRook);
+        }
         break;
     case 29:
+        if (onWhiteTeam) {
+            Queen* newQueen = new Queen(board, 'Q', pieceToChange->cord, board->getPieceTexture("Queen", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Queen*>(newQueen);
+        } else {
+            Queen* newQueen = new Queen(board, 'q', pieceToChange->cord, board->getPieceTexture("Queen", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Queen*>(newQueen);
+        }
         break;
     default:
         break;
@@ -57,11 +87,19 @@ void PawnPromotionState::drawLoop(Piece* pawnBeingChanged, std::string* boardStr
     int mouseY = -1;
     int clickedPieceCord = -1;
     Piece* pieceSelected = nullptr;
+
+    //set the correct menu texture for the sprite
+    if (isupper(pawnBeingChanged->pieceIcon)) {
+        pawnPromotionMenuSprite.setTexture(wPawnPromotionMenuTexture);
+    } else {
+        pawnPromotionMenuSprite.setTexture(bPawnPromotionMenuTexture);
+    }
     
     while (pieceNotSelected) {
         board->window->clear();
         board->drawBoard(board->window);
         board->drawPiecesCurrentlyOnBoard(board->window);
+        board->window->draw(pawnPromotionMenuSprite);
 
         //handle input
         while (const std::optional event = board->window->pollEvent())
@@ -93,50 +131,24 @@ void PawnPromotionState::drawLoop(Piece* pawnBeingChanged, std::string* boardStr
                 //overwrite stuff
 
                 //put selection on the board by overwriting pawn
-                //Rook* newRook = new Rook(this, 'R', i, wRookTexture);
-                if (isupper(pawnBeingChanged->pieceIcon)) {
-                    delete pawnBeingChanged;
+                delete pawnBeingChanged;
 
-                    //printf('pawn cord: %d', )
-                    Piece* newRook = new Rook(board, 'R', pawnBeingChanged->cord, board->getPieceTexture("Rook", true));
-                    
-                    pawnBeingChanged = newRook;
-                    
-                    //int* cords = board->convertStrIndexToBoardCords(newRook->cord);
-                    //newRook->pieceSprite.setPosition({(float)cords[0], (float)cords[1]});
+                //printf('pawn cord: %d', )                
+                pawnBeingChanged = pieceSelected;
 
-                    board->overWriteBoardAtLocation(pawnBeingChanged->cord, pawnBeingChanged->pieceIcon);
+                board->overWriteBoardAtLocation(pawnBeingChanged->cord, pawnBeingChanged->pieceIcon);
 
-                    int* newSpritePosition = board->convertStrIndexToBoardCords(pawnBeingChanged->cord);
-                    pawnBeingChanged->pieceSprite.setPosition({(float)newSpritePosition[0],(float)newSpritePosition[1]});
-                    //draw the new piece to the window
-                    //board->drawPiecesCurrentlyOnBoard(board->window);
-                 } else if (islower(pawnBeingChanged->pieceIcon)) {
-                    delete pawnBeingChanged;
-
-                    //printf('pawn cord: %d', )
-                    Piece* newRook = new Rook(board, 'r', pawnBeingChanged->cord, board->getPieceTexture("Rook", true));
-                    
-                    pawnBeingChanged = newRook;
-                    
-                    //int* cords = board->convertStrIndexToBoardCords(newRook->cord);
-                    //newRook->pieceSprite.setPosition({(float)cords[0], (float)cords[1]});
-
-                    board->overWriteBoardAtLocation(pawnBeingChanged->cord, pawnBeingChanged->pieceIcon);
-
-                    int* newSpritePosition = board->convertStrIndexToBoardCords(pawnBeingChanged->cord);
-                    pawnBeingChanged->pieceSprite.setPosition({(float)newSpritePosition[0],(float)newSpritePosition[1]});
-                    //draw the new piece to the window
-                    //board->drawPiecesCurrentlyOnBoard(board->window);
-                 }
-
+                int* newSpritePosition = board->convertStrIndexToBoardCords(pawnBeingChanged->cord);
+                pawnBeingChanged->pieceSprite.setPosition({(float)newSpritePosition[0],(float)newSpritePosition[1]});
+                
+                //draw the new piece to the window
+                //board->drawPiecesCurrentlyOnBoard(board->window);
+                 
                 pieceNotSelected = false;
             }
-
         }
 
-        //display the correct piece selection menu based on team
-
+        board->window->display();
     }
 
     pieceNotSelected = true;
@@ -147,9 +159,17 @@ Board::Board(sf::Texture* boardTexture,
             sf::Texture* wPawnTexture, 
             sf::Texture* wRookTexture,
             sf::Texture* wKingTexture, 
+            sf::Texture* wQueenTexture, 
+            sf::Texture* wKnightTexture,
+            sf::Texture* wBishopTexture,
+            sf::Texture* wPawnPromotionMenuTexture,
             sf::Texture* bPawnTexture, 
             sf::Texture* bRookTexture,
             sf::Texture* bKingTexture,
+            sf::Texture* bQueenTexture,
+            sf::Texture* bKnightTexture,
+            sf::Texture* bBishopTexture,
+            sf::Texture* bPawnPromotionMenuTexture,
             sf::RenderWindow* window) : 
 boardTexture(boardTexture),
 boardSprite(*boardTexture),
@@ -157,11 +177,19 @@ highlightSquareSprite(*highlightedSquareTexture),
 wPawnTexture(wPawnTexture),
 wRookTexture(wRookTexture),
 wKingTexture(wKingTexture),
+wQueenTexture(wQueenTexture),
+wKnightTexture(wKnightTexture),
+wBishopTexture(wBishopTexture),
+wPawnPromotionMenuTexture(wPawnPromotionMenuTexture),
 bPawnTexture(bPawnTexture),
 bRookTexture(bRookTexture),
 bKingTexture(bKingTexture),
+bQueenTexture(bQueenTexture),
+bKnightTexture(bKnightTexture),
+bBishopTexture(bBishopTexture),
+bPawnPromotionMenuTexture(bPawnPromotionMenuTexture),
 window(window),
-pawnPromotionState(this, bPawnTexture) 
+pawnPromotionState(this, bPawnPromotionMenuTexture, wPawnPromotionMenuTexture) 
 //testPawn1('P', 47, wPawnTexture, &boardString),
 //testPawn2('p', 31, bPawnTexture, &boardString)
 {
@@ -260,6 +288,8 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
 
                 piecesOnTheBoard->emplace_back(newRook);
             }
+            //end rook init------------------------------------------------------------------------
+
             if(boardString[i] == 'K') {
                 King* newKing = new King(this, 'K', i, wKingTexture);
                 
@@ -277,7 +307,60 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
 
                 piecesOnTheBoard->emplace_back(newKing);
             }
-            //end rook init------------------------------------------------------------------------
+
+            if(boardString[i] == 'Q') {
+                Queen* newQueen = new Queen(this, 'Q', i, wQueenTexture);
+                
+                //set the cord based on the index in the string arr
+                screenCords = convertStrIndexToBoardCords(newQueen->cord);
+                newQueen->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+                
+                piecesOnTheBoard->emplace_back(newQueen);
+            }
+            if(boardString[i] == 'q') {
+                Queen* newQueen = new Queen(this, 'q', i, bQueenTexture);
+
+                screenCords = convertStrIndexToBoardCords(newQueen->cord);
+                newQueen->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+
+                piecesOnTheBoard->emplace_back(newQueen);
+            }
+
+            if(boardString[i] == 'N') {
+                Knight* newKnight = new Knight(this, 'N', i, wKnightTexture);
+                
+                //set the cord based on the index in the string arr
+                screenCords = convertStrIndexToBoardCords(newKnight->cord);
+                newKnight->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+                
+                piecesOnTheBoard->emplace_back(newKnight);
+            }
+            if(boardString[i] == 'n') {
+                Knight* newKnight = new Knight(this, 'n', i, bKnightTexture);
+
+                screenCords = convertStrIndexToBoardCords(newKnight->cord);
+                newKnight->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+
+                piecesOnTheBoard->emplace_back(newKnight);
+            }
+
+            if(boardString[i] == 'B') {
+                Bishop* newBishop = new Bishop(this, 'B', i, wBishopTexture);
+                
+                //set the cord based on the index in the string arr
+                screenCords = convertStrIndexToBoardCords(newBishop->cord);
+                newBishop->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+                
+                piecesOnTheBoard->emplace_back(newBishop);
+            }
+            if(boardString[i] == 'b') {
+                Bishop* newBishop = new Bishop(this, 'b', i, bBishopTexture);
+
+                screenCords = convertStrIndexToBoardCords(newBishop->cord);
+                newBishop->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+
+                piecesOnTheBoard->emplace_back(newBishop);
+            }
         }
     }
 
@@ -499,7 +582,33 @@ bool Board::sideIsInCheckMate(std::string side) {
 }
 
 sf::Texture* Board::getPieceTexture(std::string pieceName, bool isOnWhiteTeam) {
+    sf::Texture* textureToReturn = wPawnPromotionMenuTexture;
+
     if(pieceName == "Rook") {
-        return wRookTexture;
+        if (isOnWhiteTeam) {
+            textureToReturn = wRookTexture;
+        } else {
+            textureToReturn = bRookTexture;
+        }
+    } else if(pieceName == "Bishop") {
+        if (isOnWhiteTeam) {
+            textureToReturn = wBishopTexture;
+        } else {
+            textureToReturn = bBishopTexture;
+        }
+    } else if(pieceName == "Knight") {
+        if (isOnWhiteTeam) {
+            textureToReturn = wKnightTexture;
+        } else {
+            textureToReturn = bKnightTexture;
+        }
+    } else if(pieceName == "Queen") {
+        if (isOnWhiteTeam) {
+            textureToReturn = wQueenTexture;
+        } else {
+            textureToReturn = bQueenTexture;
+        }
     }
+    
+    return textureToReturn;
 }
