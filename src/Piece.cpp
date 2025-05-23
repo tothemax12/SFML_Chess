@@ -16,14 +16,6 @@ Piece::~Piece()
 {
 }
 
-std::vector<int>* Piece::getBasicMoves() {
-    return nullptr;
-}
-
-std::vector<int>* Piece::getValidMoves() {
-    return nullptr;
-}
-
 //this function is for removing invalid locations from valid locations arr
 std::vector<int>* Piece::removeLocationsNotOnBoard(std::vector<int>* validMoves) {
     //remove vals off board
@@ -34,10 +26,6 @@ std::vector<int>* Piece::removeLocationsNotOnBoard(std::vector<int>* validMoves)
     }
 
     return validMoves;
-}
-
-std::vector<int>* Piece::getMyCapturableSpaces(std::string boardToCheck) {
-    return nullptr;
 }
 
 std::vector<int>* Piece::getSpecialMoves() {

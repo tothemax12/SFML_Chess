@@ -30,23 +30,14 @@ Piece* PawnPromotionState::getInstanceOfSelectedPiece(int selectedPieceCord, Pie
         break;
     case 27:
         if (onWhiteTeam) {
-            Knight* newKnight = new Knight(board, 'K', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam));
+            Knight* newKnight = new Knight(board, 'N', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam));
             pieceToReturn = dynamic_cast<Knight*>(newKnight);
         } else {
-            Knight* newKnight = new Knight(board, 'k', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam));
+            Knight* newKnight = new Knight(board, 'n', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam));
             pieceToReturn = dynamic_cast<Knight*>(newKnight);
         }
         break;
     case 28:
-        if (onWhiteTeam) {
-            Rook* newRook = new Rook(board, 'R', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam));
-            pieceToReturn = dynamic_cast<Rook*>(newRook);
-        } else {
-            Rook* newRook = new Rook(board, 'r', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam));
-            pieceToReturn = dynamic_cast<Rook*>(newRook);
-        }
-        break;
-    case 29:
         if (onWhiteTeam) {
             Queen* newQueen = new Queen(board, 'Q', pieceToChange->cord, board->getPieceTexture("Queen", onWhiteTeam));
             pieceToReturn = dynamic_cast<Queen*>(newQueen);
@@ -55,8 +46,21 @@ Piece* PawnPromotionState::getInstanceOfSelectedPiece(int selectedPieceCord, Pie
             pieceToReturn = dynamic_cast<Queen*>(newQueen);
         }
         break;
+    case 29:
+        if (onWhiteTeam) {
+            Rook* newRook = new Rook(board, 'R', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Rook*>(newRook);
+        } else {
+            Rook* newRook = new Rook(board, 'r', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam));
+            pieceToReturn = dynamic_cast<Rook*>(newRook);
+        }
+        break;
     default:
         break;
+    }
+
+    if(pieceToReturn != nullptr) {
+        pieceToReturn->hasNotMoved = false;
     }
 
     return pieceToReturn;
@@ -120,11 +124,11 @@ void PawnPromotionState::drawLoop(Piece* pawnBeingChanged, std::string* boardStr
                 std::cout << "String index " << clickedPieceCord << "\n";
                 //clickedPieceCord = board->convertBoardCordsToStringIndex(mouseX, mouseY);
                 //printf("%d", strIndex);
+                clickedPieceCord = handleClickPawnPromotionState(mouseX, mouseY);
             }
         }
 
         if (mouseX > -1 && mouseY > -1) {
-            clickedPieceCord = handleClickPawnPromotionState(mouseX, mouseY);
             if (clickedPieceCord != -1) {
                 pieceSelected = getInstanceOfSelectedPiece(clickedPieceCord, pawnBeingChanged);
 
@@ -136,6 +140,20 @@ void PawnPromotionState::drawLoop(Piece* pawnBeingChanged, std::string* boardStr
                 //printf('pawn cord: %d', )                
                 pawnBeingChanged = pieceSelected;
 
+                std::vector<Piece*>* piecesCurrentlyOnBoard = board->getPiecesCurrentlyOnBoard();
+                for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++)
+                {
+                    if (piecesCurrentlyOnBoard->at(i)->cord == pawnBeingChanged->cord)  {   
+                        printf("icon of piece we changed: %c\n", piecesCurrentlyOnBoard->at(i)->pieceIcon);
+                    }
+
+                    if (piecesCurrentlyOnBoard->at(i)->cord == pawnBeingChanged->cord)  {   
+                        piecesCurrentlyOnBoard->at(i) = pawnBeingChanged;
+                        printf("icon of piece we changed: %c\n", piecesCurrentlyOnBoard->at(i)->pieceIcon);
+                    }
+                }
+                
+
                 board->overWriteBoardAtLocation(pawnBeingChanged->cord, pawnBeingChanged->pieceIcon);
 
                 int* newSpritePosition = board->convertStrIndexToBoardCords(pawnBeingChanged->cord);
@@ -144,6 +162,7 @@ void PawnPromotionState::drawLoop(Piece* pawnBeingChanged, std::string* boardStr
                 //draw the new piece to the window
                 //board->drawPiecesCurrentlyOnBoard(board->window);
                  
+                board->printBoard(*board->getBoardStr());
                 pieceNotSelected = false;
             }
         }

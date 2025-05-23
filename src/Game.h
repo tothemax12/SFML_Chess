@@ -50,5 +50,6 @@ public:
     Piece* getPieceThatWasClicked(int mouseX, int mouseY);
     std::vector<int> handleClick(int mouseX, int mouseY);
 
+    //stuff related to actually playing the game
     bool whiteTurn = true;
 };
