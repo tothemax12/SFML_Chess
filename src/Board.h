@@ -100,9 +100,9 @@ public:
     
     void drawBoard(sf::RenderWindow* window);
     void drawPiecesCurrentlyOnBoard(sf::RenderWindow* window);
-    void drawHighlightedValidMoves(sf::RenderWindow* window, std::vector<int>* validMoves);
+    void drawHighlightedValidMoves(sf::RenderWindow* window, std::vector<int> validMoves);
 
-    int* convertStrIndexToBoardCords(int stringIdx);
+    std::array<int, 2> convertStrIndexToBoardCords(int stringIdx);
     int convertBoardCordsToStringIndex(int x, int y);
     bool inRange(int val, int low, int high);
 
@@ -115,13 +115,15 @@ public:
     std::vector<Piece*>* getCopyPieceVect();
 
     //takes in "Black" or "White" for team, and 0 (current real board), or 1 (copy board after a move was made) for which board to check
-    std::vector<int>* getAllCapturableSpacesForAGivenSide(std::string sideThatIsCapturingPieces, std::string boardToUse, std::vector<Piece*>* vectOfPiecesToUse);
+    std::vector<int> getAllCapturableSpacesForAGivenSide(std::string sideThatIsCapturingPieces, std::string boardToUse, std::vector<Piece*>* vectOfPiecesToUse);
 
-    bool isKingCapturable(std::vector<int>* vectOfAllCapturableLocations, std::string sideThatIsCapturingPieces, std::string whichBoardToCheck);
+    bool isKingCapturable(std::vector<int> vectOfAllCapturableLocations, std::string sideThatIsCapturingPieces, std::string whichBoardToCheck);
     bool sideIsInCheckMate(std::string side);
 
     sf::Texture* getPieceTexture(std::string pieceName, bool isOnWhiteTeam);
 
     sf::RenderWindow* window;
     PawnPromotionState pawnPromotionState;
+
+    void freeVectorOfPieces(std::vector<Piece*>* vectOfPieces);
 };

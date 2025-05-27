@@ -156,7 +156,7 @@ void PawnPromotionState::drawLoop(Piece* pawnBeingChanged, std::string* boardStr
 
                 board->overWriteBoardAtLocation(pawnBeingChanged->cord, pawnBeingChanged->pieceIcon);
 
-                int* newSpritePosition = board->convertStrIndexToBoardCords(pawnBeingChanged->cord);
+                std::array<int, 2> newSpritePosition = board->convertStrIndexToBoardCords(pawnBeingChanged->cord);
                 pawnBeingChanged->pieceSprite.setPosition({(float)newSpritePosition[0],(float)newSpritePosition[1]});
                 
                 //draw the new piece to the window
@@ -266,7 +266,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
     //Pawn::Pawn(char pieceIcon, int cord, sf::Texture* pieceTexture, std::string* currentBoardString) : 
 
     std::vector<Piece*>* piecesOnTheBoard = new std::vector<Piece*>;
-    int* screenCords;
+    std::array<int, 2> screenCords;
     for (int i = 0; i < boardString.size(); i++) {
         if (boardString[i] != '0') {
             //Pawn init
@@ -413,15 +413,15 @@ void Board::drawPiecesCurrentlyOnBoard(sf::RenderWindow* window) {
     }
 }
 
-void Board::drawHighlightedValidMoves(sf::RenderWindow* window, std::vector<int>* validMoves) {
-    int* screenCords;
-    for (int i = 0; i < validMoves->size(); i++) {
+void Board::drawHighlightedValidMoves(sf::RenderWindow* window, std::vector<int> validMoves) {
+    std::array<int, 2> screenCords;
+    for (int i = 0; i < validMoves.size(); i++) {
         //draw the special moves for the player too
-        if (validMoves->at(i) < 0) {
-            screenCords = convertStrIndexToBoardCords(-1*validMoves->at(i));
+        if (validMoves.at(i) < 0) {
+            screenCords = convertStrIndexToBoardCords(-1*validMoves.at(i));
         } else {
         //get cords
-            screenCords = convertStrIndexToBoardCords(validMoves->at(i));
+            screenCords = convertStrIndexToBoardCords(validMoves.at(i));
         }
         highlightSquareSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
         window->draw(highlightSquareSprite);
@@ -429,7 +429,7 @@ void Board::drawHighlightedValidMoves(sf::RenderWindow* window, std::vector<int>
 }
 
 
-int* Board::convertStrIndexToBoardCords(int stringIdx) {
+std::array<int, 2> Board::convertStrIndexToBoardCords(int stringIdx) {
     //0->63
 	//spit out (x, y)
 	
@@ -449,7 +449,7 @@ int* Board::convertStrIndexToBoardCords(int stringIdx) {
 			y += 80;
 		}
 	}
-	int* cords = new int[2];
+	std::array<int, 2> cords;
 	cords[0] = x;
 	cords[1] = y;
 	return cords;
@@ -465,9 +465,9 @@ bool Board::inRange(int val, int low, int high) {
     return (val >= low && val <= high);    
 }
 
-std::vector<int>* Board::getAllCapturableSpacesForAGivenSide(std::string sideThatIsCapturingPieces, std::string boardToUse, std::vector<Piece*>* vectOfPiecesToUse) {
-    std::vector<int>* allSpacesOfPiecesThatCanBeCaptured = new std::vector<int>;
-    std::vector<int>* currentPiecesCapturableSpaces;
+std::vector<int> Board::getAllCapturableSpacesForAGivenSide(std::string sideThatIsCapturingPieces, std::string boardToUse, std::vector<Piece*>* vectOfPiecesToUse) {
+    std::vector<int> allSpacesOfPiecesThatCanBeCaptured;
+    std::vector<int> currentPiecesCapturableSpaces;
     std::vector<Piece*>* vectorOfRelaventPieces = vectOfPiecesToUse;
     if (sideThatIsCapturingPieces == "White") {
         for (int i = 0; i < vectorOfRelaventPieces->size(); i++) {
@@ -475,9 +475,9 @@ std::vector<int>* Board::getAllCapturableSpacesForAGivenSide(std::string sideTha
             if (isupper(vectorOfRelaventPieces->at(i)->pieceIcon)) {
                 currentPiecesCapturableSpaces = vectorOfRelaventPieces->at(i)->getMyCapturableSpaces(boardToUse);
                 //printf("size of currentPiecesCapturableSpaces: %d\n", currentPiecesCapturableSpaces->size());
-                for (int j = 0; j < currentPiecesCapturableSpaces->size(); j++)
+                for (int j = 0; j < currentPiecesCapturableSpaces.size(); j++)
                 {
-                    allSpacesOfPiecesThatCanBeCaptured->push_back(currentPiecesCapturableSpaces->at(j));
+                    allSpacesOfPiecesThatCanBeCaptured.push_back(currentPiecesCapturableSpaces.at(j));
                 }
             }
         }
@@ -486,9 +486,9 @@ std::vector<int>* Board::getAllCapturableSpacesForAGivenSide(std::string sideTha
             //if there is a black piece, get the spaces it is currently able to capture
             if (!isupper(vectorOfRelaventPieces->at(i)->pieceIcon)) {
                 currentPiecesCapturableSpaces = vectorOfRelaventPieces->at(i)->getMyCapturableSpaces(boardToUse);
-                for (int j = 0; j < currentPiecesCapturableSpaces->size(); j++)
+                for (int j = 0; j < currentPiecesCapturableSpaces.size(); j++)
                 {
-                    allSpacesOfPiecesThatCanBeCaptured->push_back(currentPiecesCapturableSpaces->at(j));
+                    allSpacesOfPiecesThatCanBeCaptured.push_back(currentPiecesCapturableSpaces.at(j));
                 }
             }
         }
@@ -497,7 +497,7 @@ std::vector<int>* Board::getAllCapturableSpacesForAGivenSide(std::string sideTha
     return allSpacesOfPiecesThatCanBeCaptured;
 }
 
-bool Board::isKingCapturable(std::vector<int>* vectOfAllCapturableLocations, std::string sideThatIsCapturingPieces, std::string whichBoardToCheck) {
+bool Board::isKingCapturable(std::vector<int> vectOfAllCapturableLocations, std::string sideThatIsCapturingPieces, std::string whichBoardToCheck) {
     
     std::string boardStrToCheck = whichBoardToCheck;
     // if (whichBoardToCheck == "Real") {
@@ -509,18 +509,18 @@ bool Board::isKingCapturable(std::vector<int>* vectOfAllCapturableLocations, std
     
     std::string strOfCapturablePieceIcons;
     if (sideThatIsCapturingPieces == "Black") {
-        for (int i = 0; i < vectOfAllCapturableLocations->size(); i++)
+        for (int i = 0; i < vectOfAllCapturableLocations.size(); i++)
         {
             //if there is a white piece that can be captured, store it's pieceIcon
-           if (isupper(boardStrToCheck[vectOfAllCapturableLocations->at(i)])) {
-            strOfCapturablePieceIcons+=boardStrToCheck[vectOfAllCapturableLocations->at(i)];
+           if (isupper(boardStrToCheck[vectOfAllCapturableLocations.at(i)])) {
+            strOfCapturablePieceIcons+=boardStrToCheck[vectOfAllCapturableLocations.at(i)];
            }
         }
     } else if (sideThatIsCapturingPieces == "White") {
-        for (int i = 0; i < vectOfAllCapturableLocations->size(); i++)
+        for (int i = 0; i < vectOfAllCapturableLocations.size(); i++)
         {
-           if (islower(boardStrToCheck[vectOfAllCapturableLocations->at(i)])) {
-            strOfCapturablePieceIcons+=boardStrToCheck[vectOfAllCapturableLocations->at(i)];
+           if (islower(boardStrToCheck[vectOfAllCapturableLocations.at(i)])) {
+            strOfCapturablePieceIcons+=boardStrToCheck[vectOfAllCapturableLocations.at(i)];
            }
         }
     }
@@ -586,7 +586,7 @@ bool Board::sideIsInCheckMate(std::string side) {
     {
         currentPiecesTeam = piecesCurrentlyOnBoard->at(i)->getMyTeamString();
         if (currentPiecesTeam == side) {
-            currentPiecesValidMoves = *piecesCurrentlyOnBoard->at(i)->getValidMoves();
+            currentPiecesValidMoves = piecesCurrentlyOnBoard->at(i)->getValidMoves();
             for (int j = 0; j < currentPiecesValidMoves.size(); j++) {
                 allValidMovesForASide.push_back(currentPiecesValidMoves.at(j));
             }
@@ -630,4 +630,12 @@ sf::Texture* Board::getPieceTexture(std::string pieceName, bool isOnWhiteTeam) {
     }
     
     return textureToReturn;
+}
+
+void Board::freeVectorOfPieces(std::vector<Piece*>* vectOfPieces) {
+    for (int i = 0; i < vectOfPieces->size(); i++)
+    {
+        delete vectOfPieces->at(i);
+    }
+    delete vectOfPieces;
 }

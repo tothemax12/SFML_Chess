@@ -7,8 +7,8 @@ Piece(board, pieceIcon, cord, pieceTexture)
 
 }
 
-std::vector<int>* Queen::getBasicMoves() {
-    std::vector<int>* basicMoves = new std::vector<int>;
+std::vector<int> Queen::getBasicMoves() {
+    std::vector<int> basicMoves;
     std::string boardStr = *board->getBoardStr();
 
     //right direction, go to the right until it wraps back to the left
@@ -29,7 +29,7 @@ std::vector<int>* Queen::getBasicMoves() {
             break;
         }
 
-        basicMoves->push_back(i);
+        basicMoves.push_back(i);
     }
 
     bool initiallyOnRS = onRightSideOfBoard(cord);
@@ -50,7 +50,7 @@ std::vector<int>* Queen::getBasicMoves() {
             break;
         }
 
-        basicMoves->push_back(i);
+        basicMoves.push_back(i);
     }
     
     //upward direction
@@ -64,7 +64,7 @@ std::vector<int>* Queen::getBasicMoves() {
             break;
         }
 
-        basicMoves->push_back(i);
+        basicMoves.push_back(i);
     }
 
     //downward direction
@@ -78,7 +78,7 @@ std::vector<int>* Queen::getBasicMoves() {
             break;
         }
 
-        basicMoves->push_back(i);
+        basicMoves.push_back(i);
     }
     
     //upward right diagonal
@@ -95,11 +95,11 @@ std::vector<int>* Queen::getBasicMoves() {
 
             if(onRightSideOfBoard(i)) {
                 //can't go up and diagonal more if we hit the side
-                basicMoves->push_back(i);
+                basicMoves.push_back(i);
                 break;
             }
 
-            basicMoves->push_back(i);
+            basicMoves.push_back(i);
         }
     }
 
@@ -117,11 +117,11 @@ std::vector<int>* Queen::getBasicMoves() {
 
             if(onLeftSideOfBoard(i)) {
                 //can't go up and diagonal more if we hit the side
-                basicMoves->push_back(i);
+                basicMoves.push_back(i);
                 break;
             }
 
-            basicMoves->push_back(i);
+            basicMoves.push_back(i);
         }
     }
 
@@ -139,11 +139,11 @@ std::vector<int>* Queen::getBasicMoves() {
 
             if(onLeftSideOfBoard(i)) {
                 //can't go up and diagonal more if we hit the side
-                basicMoves->push_back(i);
+                basicMoves.push_back(i);
                 break;
             }
 
-            basicMoves->push_back(i);
+            basicMoves.push_back(i);
         }
     }
 
@@ -161,20 +161,20 @@ std::vector<int>* Queen::getBasicMoves() {
 
             if(onRightSideOfBoard(i)) {
                 //can't go up and diagonal more if we hit the side
-                basicMoves->push_back(i);
+                basicMoves.push_back(i);
                 break;
             }
 
-            basicMoves->push_back(i);
+            basicMoves.push_back(i);
         }
     }
 
     return basicMoves;
 }
 
-std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
+std::vector<int> Queen::getMyCapturableSpaces(std::string boardToCheck) {
 
-    std::vector<int>* capturableMoves = new std::vector<int>;
+    std::vector<int> capturableMoves;
     //std::string boardStr = *board->getBoardStr();
     std::string boardStr = boardToCheck;
 
@@ -195,7 +195,7 @@ std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
         if (boardStr.at(i) != '0') {
             //only if it is on the opponents team do we add it
             if (opponentIsOnSpace(boardStr.at(i))) {
-                capturableMoves->push_back(i);
+                capturableMoves.push_back(i);
             }
 
             //either way, we hit something, so we are still done.
@@ -220,7 +220,7 @@ std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
         if (boardStr.at(i) != '0') {
             //only if it is on the opponents team do we add it
             if (opponentIsOnSpace(boardStr.at(i))) {
-                capturableMoves->push_back(i);
+                capturableMoves.push_back(i);
             }
 
             //either way, we hit something, so we are still done.
@@ -239,7 +239,7 @@ std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
         if (boardStr.at(i) != '0') {
             //only if it is on the opponents team do we add it
             if (opponentIsOnSpace(boardStr.at(i))) {
-                capturableMoves->push_back(i);
+                capturableMoves.push_back(i);
             }
 
             //either way, we hit something, so we are still done.
@@ -258,7 +258,7 @@ std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
         if (boardStr.at(i) != '0') {
             //only if it is on the opponents team do we add it
             if (opponentIsOnSpace(boardStr.at(i))) {
-                capturableMoves->push_back(i);
+                capturableMoves.push_back(i);
             }
 
             //either way, we hit something, so we are still done.
@@ -277,7 +277,7 @@ std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
             //we hit something
             if (boardStr.at(i) != '0') {
                 if (opponentIsOnSpace(boardStr.at(i))) {
-                    capturableMoves->push_back(i);
+                    capturableMoves.push_back(i);
                 }
                 break;
             }
@@ -299,7 +299,7 @@ std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
             //we hit something
             if (boardStr.at(i) != '0') {
                 if (opponentIsOnSpace(boardStr.at(i))) {
-                    capturableMoves->push_back(i);
+                    capturableMoves.push_back(i);
                 }
                 break;
             }
@@ -321,7 +321,7 @@ std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
             //we hit something
             if (boardStr.at(i) != '0') {
                 if (opponentIsOnSpace(boardStr.at(i))) {
-                    capturableMoves->push_back(i);
+                    capturableMoves.push_back(i);
                 }
                 break;
             }
@@ -343,7 +343,7 @@ std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
             //we hit something
             if (boardStr.at(i) != '0') {
                 if (opponentIsOnSpace(boardStr.at(i))) {
-                    capturableMoves->push_back(i);
+                    capturableMoves.push_back(i);
                 }
                 break;
             }
@@ -357,52 +357,53 @@ std::vector<int>* Queen::getMyCapturableSpaces(std::string boardToCheck) {
     return capturableMoves;
 }
 
-std::vector<int>* Queen::getSpecialMoves() {
-    return nullptr;
+std::vector<int> Queen::getSpecialMoves() {
+    std::vector<int> specialMoves;
+    return specialMoves;
 }
 
 void Queen::preformSpecialMove(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) {
     
 }
 
-std::vector<int>* Queen::getValidMoves() {
+std::vector<int> Queen::getValidMoves() {
     //brainstorming...
     //also need to confirm they are on the board.
     //okay these are the basic moves, but if any of them put the king
     //in check we need to throw them out.
     //additionally, the pawn can preform a special move, so we
     //also need to account for that.
-    std::vector<int>* validMoves = new std::vector<int>;
-    std::vector<int>* basicMoves = getBasicMoves();
-    std::vector<int>* capturableSpaces = getMyCapturableSpaces(*board->getBoardStr());
+    std::vector<int> validMoves;
+    std::vector<int> basicMoves = getBasicMoves();
+    std::vector<int> capturableSpaces = getMyCapturableSpaces(*board->getBoardStr());
     bool isKingInDangerIfMoveWasPreformed = false;
 
     //printf("valid moves size: %d \n", validMoves->size());
-    for (int i = 0; i < basicMoves->size(); i++)
+    for (int i = 0; i < basicMoves.size(); i++)
     {
-        //printf("basic moves size: %d \n", basicMoves->size());
+        //printf("basic moves size: %d \n", basicMoves.size());
         //printf("i: %d \n", i);
         //printf("valid moves size: %d \n", validMoves->size());
-        validMoves->emplace_back(basicMoves->at(i));
+        validMoves.emplace_back(basicMoves.at(i));
         //printf("valid moves size: %d \n", validMoves->size());
         
     }
     
-    for (int i = 0; i < capturableSpaces->size(); i++)
+    for (int i = 0; i < capturableSpaces.size(); i++)
     {
         //printf("capt spaces size: %d \n", capturableSpaces->size());
         //printf("i: %d \n", i);
         //printf("valid moves size: %d \n", validMoves->size());
-        validMoves->emplace_back(capturableSpaces->at(i));
+        validMoves.emplace_back(capturableSpaces.at(i));
         //printf("valid moves size: %d \n", validMoves->size());
     }
 
     //need to remove the spaces that put the king in danger. that is not valid
-    for (int i = validMoves->size()-1; i > -1; i--)
+    for (int i = validMoves.size()-1; i > -1; i--)
     {
-        isKingInDangerIfMoveWasPreformed = isMoveValid(validMoves->at(i), getMyTeamString());
+        isKingInDangerIfMoveWasPreformed = isMoveValid(validMoves.at(i), getMyTeamString());
         if (isKingInDangerIfMoveWasPreformed) {
-            validMoves->erase(validMoves->begin()+i);
+            validMoves.erase(validMoves.begin()+i);
         }
     }
 

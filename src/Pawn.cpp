@@ -11,8 +11,8 @@ Pawn::~Pawn()
 {
 }
 
-std::vector<int>* Pawn::getBasicMoves() {
-    std::vector<int>* validMoves = new std::vector<int>;
+std::vector<int> Pawn::getBasicMoves() {
+    std::vector<int> validMoves;
     std::string currentBoard = *board->getBoardCopyStr();
 
     bool isWhitePiece = isupper(this->pieceIcon);
@@ -22,22 +22,22 @@ std::vector<int>* Pawn::getBasicMoves() {
     }
     
     if (hasNotMoved) {
-        validMoves->push_back(cord+offset);
-        validMoves->push_back(cord+2*offset);
+        validMoves.push_back(cord+offset);
+        validMoves.push_back(cord+2*offset);
     } else {
-        validMoves->push_back(cord+offset);
-        validMoves->push_back(-1);
+        validMoves.push_back(cord+offset);
+        validMoves.push_back(-1);
     }
 
 
     //remove the spaces that are blocked by an opponent in front of the pawn
     //(can't capture forward)
     //std::string currentBoard = *currentBoardString;
-    // for (int i = 0; i < validMoves->size(); i++) {
-    //     if (currentBoard[validMoves->at(i)] != '0') {
+    // for (int i = 0; i < validMoves.size(); i++) {
+    //     if (currentBoard[validMoves.at(i)] != '0') {
     //         //also there is a piece in front of us, we can't capture that
-    //         for(int j = i; j < validMoves->size(); j++) {
-    //             validMoves->at(j) = -1;
+    //         for(int j = i; j < validMoves.size(); j++) {
+    //             validMoves.at(j) = -1;
     //         }
     //         //if we hit a piece we can't go beyond that piece
     //         break;
@@ -49,16 +49,16 @@ std::vector<int>* Pawn::getBasicMoves() {
     //do not need to be concerned about pieces blocking us
     if (!board->inRange(cord+offset, 0, 63) && !board->inRange(cord+2*offset, 0, 63)) {
         printf("valid basic moves:\n");
-        for (int i = 0; i < validMoves->size(); i++) {
-            printf("%d\n", validMoves->at(i));
+        for (int i = 0; i < validMoves.size(); i++) {
+            printf("%d\n", validMoves.at(i));
         }
 
         //remove out of bounds spots
         validMoves = removeLocationsNotOnBoard(validMoves);
 
         printf("valid basic moves:\n");
-        for (int i = 0; i < validMoves->size(); i++) {
-            printf("%d\n", validMoves->at(i));
+        for (int i = 0; i < validMoves.size(); i++) {
+            printf("%d\n", validMoves.at(i));
         }
 
     } else if (board->inRange(cord+offset, 0, 63) && !board->inRange(cord+2*offset, 0, 63)) {
@@ -69,8 +69,8 @@ std::vector<int>* Pawn::getBasicMoves() {
             //is taken, then throw out all the basic moves
             //we are blocked
     
-            validMoves->at(0) = -1;
-            validMoves->at(1) = -1;
+            validMoves.at(0) = -1;
+            validMoves.at(1) = -1;
         }
         validMoves = removeLocationsNotOnBoard(validMoves);
     } else if (board->inRange(cord+offset, 0, 63) && board->inRange(cord+2*offset, 0, 63)) {
@@ -81,14 +81,14 @@ std::vector<int>* Pawn::getBasicMoves() {
             //is taken, then throw out all the basic moves
             //we are blocked
     
-            validMoves->at(0) = -1;
-            validMoves->at(1) = -1;
+            validMoves.at(0) = -1;
+            validMoves.at(1) = -1;
         }
     
         if (board->getBoardStr()->at(secondSpotInFrontOfPawn) != '0') {
             //only the second spot in front of
             //pawn is
-            validMoves->at(1) = -1;
+            validMoves.at(1) = -1;
         }
         validMoves = removeLocationsNotOnBoard(validMoves);
     }
@@ -97,37 +97,37 @@ std::vector<int>* Pawn::getBasicMoves() {
 
 //getCapturableSpaces takes in a board string to be able to check other boards if a move to were
 //potentially be made
-std::vector<int>* Pawn::getMyCapturableSpaces(std::string boardToCheck) {
+std::vector<int> Pawn::getMyCapturableSpaces(std::string boardToCheck) {
     // std::cout << "Board pawn is seeing when capturing: \n\n";
     // board->printBoard(boardToCheck);
     // std::cout << "\nend board pawn is seeing: \n\n";
 
-    std::vector<int>* capturableSpaces = new std::vector<int>;
+    std::vector<int> capturableSpaces;
     if (pieceIcon == 'P') {
         //ignore the right capturable square of pawn if on side of board
         if (!(cord == 7 || cord == 15 || cord == 23 || cord == 31 || cord == 39 || cord == 47 || cord == 55 || cord == 63)) {
             //if it's also a white piece ignore it
             if (((cord-7) >= 0 && (cord-7) <= 63) && !isupper(boardToCheck.at(cord-7))) {
-                capturableSpaces->push_back(cord-7);
+                capturableSpaces.push_back(cord-7);
             }
         }
         //if a pawn is on the right side of board, ignore the left one
         if (cord != 0 && cord % 8) {
             if (((cord-9) >= 0 && (cord-9) <= 63) && !isupper(boardToCheck.at(cord-9))) {
-                capturableSpaces->push_back(cord-9);
+                capturableSpaces.push_back(cord-9);
             }
         }
     } else {
         //if they are on the sides, do not add the val that goes off the board
         if (cord != 0 && cord % 8) {
             if (((cord+7) >= 0 && (cord+7) <= 63) && isupper(boardToCheck.at(cord+7))) {
-                capturableSpaces->push_back(cord+7);
+                capturableSpaces.push_back(cord+7);
             }
         }
             //if black pawn is on the right side of board, ignore the right capturable space cord
         if (!(cord == 7 || cord == 15 || cord == 23 || cord == 31 || cord == 39 || cord == 47 || cord == 55 || cord == 63)) {
             if (((cord+9) >= 0 && (cord+9) <= 63) && isupper(boardToCheck.at(cord+9))) {
-                capturableSpaces->push_back(cord+9);
+                capturableSpaces.push_back(cord+9);
             }
         }
     }
@@ -135,9 +135,9 @@ std::vector<int>* Pawn::getMyCapturableSpaces(std::string boardToCheck) {
     //can't capture stuff if nothing is there
     //std::string currentBoard = *board->getBoardStr();
     std::string currentBoard = boardToCheck;
-    for (int i = 0; i < capturableSpaces->size(); i++) {
-        if (currentBoard[capturableSpaces->at(i)] == '0') {
-            capturableSpaces->at(i) = -1;
+    for (int i = 0; i < capturableSpaces.size(); i++) {
+        if (currentBoard[capturableSpaces.at(i)] == '0') {
+            capturableSpaces.at(i) = -1;
         }
     }
 
@@ -145,19 +145,19 @@ std::vector<int>* Pawn::getMyCapturableSpaces(std::string boardToCheck) {
     
     printf("valid capturable spaces:\n");
     //printf("%c???", currentBoard[38]);
-    for (int i = 0; i < capturableSpaces->size(); i++) {
-        printf("%d\n", capturableSpaces->at(i));
+    for (int i = 0; i < capturableSpaces.size(); i++) {
+        printf("%d\n", capturableSpaces.at(i));
     }
 
     return capturableSpaces;
 }
 
-std::vector<int>* Pawn::getSpecialMoves() {
+std::vector<int> Pawn::getSpecialMoves() {
     //well to start, I could only do en passant if
     //there is a piece immediately to my left or right.
     std::string boardString = *board->getBoardStr();
     std::vector<Piece*>* piecesCurrentlyOnBoard = board->getPiecesCurrentlyOnBoard();
-    std::vector<int>* specialMoves = new std::vector<int>;
+    std::vector<int> specialMoves;
     Pawn* leftPawnIAmCapturing = nullptr;
     Pawn* rightPawnIAmCapturing  = nullptr;
 
@@ -165,28 +165,27 @@ std::vector<int>* Pawn::getSpecialMoves() {
     
     if (isWhitePiece) {
         //left side
-        specialMoves->push_back(this->cord-1);
+        specialMoves.push_back(this->cord-1);
         //right side
-        specialMoves->push_back(this->cord+1);
+        specialMoves.push_back(this->cord+1);
     } else {
         //left side
-        specialMoves->push_back(this->cord+1);
+        specialMoves.push_back(this->cord+1);
         //right side
-        specialMoves->push_back(this->cord-1);
+        specialMoves.push_back(this->cord-1);
     }
 
     //does this break it
     if (onLeftSideOfBoard(this->cord)) {
-        specialMoves->at(0) = -1;//throw out the left value
+        specialMoves.at(0) = -1;//throw out the left value
     } else if (onRightSideOfBoard(this->cord)) {
-        specialMoves->at(1) = -1;//throw out the right
+        specialMoves.at(1) = -1;//throw out the right
     }
     
-    //if a piece on the left
     int leftCord = -1;
     int rightCord = -1;
-    leftCord = specialMoves->at(0);
-    rightCord = specialMoves->at(1);
+    leftCord = specialMoves.at(0);
+    rightCord = specialMoves.at(1);
     if ((isWhitePiece && leftCord != -1 && boardString.at(leftCord) == 'p' && boardString.at(leftCord-8) == '0') ||
         (isWhitePiece && rightCord != -1 && boardString.at(rightCord) == 'p' && boardString.at(rightCord-8) == '0')||
         (!isWhitePiece && leftCord != -1 && boardString.at(leftCord) == 'P' && boardString.at(leftCord+8) == '0')||
@@ -212,7 +211,7 @@ std::vector<int>* Pawn::getSpecialMoves() {
                     //everything is good, can preform the special move!
                     //put the negative of the left cord to indicate that
                     //we can make that move
-                    specialMoves->at(0) = -1*(leftCord);
+                    specialMoves.at(0) = -1*(leftCord);
                 }
                 
                 //check if pawn just got to my left
@@ -220,7 +219,7 @@ std::vector<int>* Pawn::getSpecialMoves() {
                     //everything is good, can preform the special move!
                     //put the negative of the left cord to indicate that
                     //we can make that move
-                    specialMoves->at(1) = -1*(rightCord);
+                    specialMoves.at(1) = -1*(rightCord);
                 }
             }
     
@@ -239,10 +238,10 @@ std::vector<int>* Pawn::getSpecialMoves() {
     }
 
     //remove the -1's
-    for (int i = specialMoves->size()-1; i > -1; i--)
+    for (int i = specialMoves.size()-1; i > -1; i--)
     {
-        if (specialMoves->at(i) == -1 || specialMoves->at(i) > 0) {
-            specialMoves->erase(specialMoves->begin()+i);
+        if (specialMoves.at(i) == -1 || specialMoves.at(i) > 0) {
+            specialMoves.erase(specialMoves.begin()+i);
         }
     }
     
@@ -250,6 +249,11 @@ std::vector<int>* Pawn::getSpecialMoves() {
 }
 
 void Pawn::preformSpecialMove(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) {
+    if (!isCopy) {
+        printf("debug \n");
+    }
+
+
     //if move is to the left, preform en passant to the left
     int realMoveCord = -1*moveIndex;
     int myNewCord = -1;
@@ -288,7 +292,7 @@ void Pawn::preformSpecialMove(int moveIndex, std::string* boardStrToChange, std:
     //update the piece that captured's data
     pawnToUpdate->cord = myNewCord;
 
-    int* screenCords = board->convertStrIndexToBoardCords(pawnToUpdate->cord);
+    std::array<int, 2> screenCords = board->convertStrIndexToBoardCords(pawnToUpdate->cord);
     pawnToUpdate->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
 
     printf("board after special move: \n\n");
@@ -297,17 +301,17 @@ void Pawn::preformSpecialMove(int moveIndex, std::string* boardStrToChange, std:
 }
 
 
-std::vector<int>* Pawn::getValidMoves() {
+std::vector<int> Pawn::getValidMoves() {
     //brainstorming...
     //also need to confirm they are on the board.
     //okay these are the basic moves, but if any of them put the king
     //in check we need to throw them out.
     //additionally, the pawn can preform a special move, so we
     //also need to account for that.
-    std::vector<int>* validMoves = new std::vector<int>;
-    std::vector<int>* basicMoves = getBasicMoves();
-    std::vector<int>* capturableSpaces = getMyCapturableSpaces(*board->getBoardStr());
-    std::vector<int>* specialMoves = getSpecialMoves();
+    std::vector<int> validMoves;
+    std::vector<int> basicMoves = getBasicMoves();
+    std::vector<int> capturableSpaces = getMyCapturableSpaces(*board->getBoardStr());
+    std::vector<int> specialMoves = getSpecialMoves();
     bool isKingInDangerIfMoveWasPreformed = false;
 
     //first check if we can even preform the special move,
@@ -315,40 +319,40 @@ std::vector<int>* Pawn::getValidMoves() {
     //to indicate it is a special move
     
 
-    //printf("valid moves size: %d \n", validMoves->size());
-    for (int i = 0; i < basicMoves->size(); i++)
+    //printf("valid moves size: %d \n", validMoves.size());
+    for (int i = 0; i < basicMoves.size(); i++)
     {
-        //printf("basic moves size: %d \n", basicMoves->size());
+        //printf("basic moves size: %d \n", basicMoves.size());
         printf("i: %d \n", i);
-        //printf("valid moves size: %d \n", validMoves->size());
-        validMoves->emplace_back(basicMoves->at(i));
-        //printf("valid moves size: %d \n", validMoves->size());
+        //printf("valid moves size: %d \n", validMoves.size());
+        validMoves.emplace_back(basicMoves.at(i));
+        //printf("valid moves size: %d \n", validMoves.size());
         
     }
     
-    for (int i = 0; i < capturableSpaces->size(); i++)
+    for (int i = 0; i < capturableSpaces.size(); i++)
     {
-        //printf("capt spaces size: %d \n", capturableSpaces->size());
+        //printf("capt spaces size: %d \n", capturableSpaces.size());
         //printf("i: %d \n", i);
-        //printf("valid moves size: %d \n", validMoves->size());
-        validMoves->emplace_back(capturableSpaces->at(i));
-        //printf("valid moves size: %d \n", validMoves->size());
+        //printf("valid moves size: %d \n", validMoves.size());
+        validMoves.emplace_back(capturableSpaces.at(i));
+        //printf("valid moves size: %d \n", validMoves.size());
     }
 
         printf("special moves: \n");
-    for (int i = 0; i < specialMoves->size(); i++)
+    for (int i = 0; i < specialMoves.size(); i++)
     {
-        printf("%d ", specialMoves->at(i));
-        validMoves->emplace_back(specialMoves->at(i));        
+        printf("%d ", specialMoves.at(i));
+        validMoves.emplace_back(specialMoves.at(i));        
     }
     printf("end of special moves: \n");
 
     //need to remove the spaces that put the king in danger. that is not valid
-    for (int i = validMoves->size()-1; i > -1; i--)
+    for (int i = validMoves.size()-1; i > -1; i--)
     {
-        isKingInDangerIfMoveWasPreformed = isMoveValid(validMoves->at(i), getMyTeamString());
+        isKingInDangerIfMoveWasPreformed = isMoveValid(validMoves.at(i), getMyTeamString());
         if (isKingInDangerIfMoveWasPreformed) {
-            validMoves->erase(validMoves->begin()+i);
+            validMoves.erase(validMoves.begin()+i);
         }
     }
     
@@ -374,3 +378,37 @@ std::vector<int>* Pawn::getValidMoves() {
 //         }
 //     }
 // }
+
+void Pawn::updatePiecesInformation(int currentGameTurn) {
+    static int turnIMoved2SpacesOn = 0;
+
+    //moved 2 spaces mean, I am on the second row
+    bool onSecondRow = (isupper(this->pieceIcon) && board->inRange(this->cord, 32, 39)) || 
+                       (islower(this->pieceIcon) && board->inRange(this->cord, 24, 31));
+    
+    bool onThirdRow = (isupper(this->pieceIcon) && board->inRange(this->cord, 24, 31)) || 
+                      (islower(this->pieceIcon) && board->inRange(this->cord, 32, 39));
+
+    if (iMovedTwoSpacesOfMyFirstTurn && (turnIMoved2SpacesOn == currentGameTurn-1)) {
+        iMovedTwoSpacesLastTurn = true;
+    } else {
+        iMovedTwoSpacesLastTurn = false;
+    }
+
+    if (hasNotMoved && onSecondRow) {
+        iMovedTwoSpacesOfMyFirstTurn = true;
+        turnIMoved2SpacesOn = currentGameTurn;
+
+        iMovedTwoSpacesLastTurn = true;
+    }
+
+    if (onThirdRow) {
+        iMovedThreeSpacesForward = true;
+    } else {
+        iMovedThreeSpacesForward = false;
+    }
+
+    hasNotMoved = false;
+
+    std::cout << iMovedTwoSpacesOfMyFirstTurn << "\n" << iMovedTwoSpacesLastTurn << "\n" << iMovedThreeSpacesForward << "\n" << hasNotMoved << "\n";
+}

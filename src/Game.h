@@ -44,12 +44,22 @@ public:
          sf::Texture* bPawnPromotionMenuTexture);
     ~Game();
     void debugValidMoves();
-    void draw();
+    void draw(std::vector<int> validMovesOfClickedPiece);
 
     std::vector<int> getValidMovesForClickedSpace(int mouseX, int mouseY);
     Piece* getPieceThatWasClicked(int mouseX, int mouseY);
     std::vector<int> handleClick(int mouseX, int mouseY);
 
     //stuff related to actually playing the game
+    int turnCount = 0;
     bool whiteTurn = true;
+    bool currentPlayerIsInCheckmate = false;
+    std::string currentTeam = "White";
+    std::array<int, 2> checkInput();
+
+    std::vector<int> getValidMovesOfClickedPiece(Piece* clickedPiece);
+    int playerClickedAValidMoveLocation(std::vector<int> validMoves, int strIdxOfClick);
+    void checkIfCorrectTeamAndMovePiece(Piece* clickedPiece, int clickedValidSpace);
+    std::vector<int> handleClickGame(int mouseX, int mouseY);
+    int playGame();
 };

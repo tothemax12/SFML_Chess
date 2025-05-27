@@ -11,18 +11,20 @@ public:
     ~Pawn();
 
     //flags related to special moves
-    bool iMovedTwoSpacesOfMyFirstTurn = true;
-    bool iMovedTwoSpacesLastTurn = true;
-    bool iMovedThreeSpacesForward = true;
+    bool iMovedTwoSpacesOfMyFirstTurn = false;
+    bool iMovedTwoSpacesLastTurn = false;
+    bool iMovedThreeSpacesForward = false;
     
-    std::vector<int>* getBasicMoves() override;
+    std::vector<int> getBasicMoves() override;
     //pawn is weird and can't capture forward
-    std::vector<int>* getMyCapturableSpaces(std::string boardToCheck) override;
+    std::vector<int> getMyCapturableSpaces(std::string boardToCheck) override;
     
     void preformSpecialMove(int moveIndex, std::string* boardStrToChange, std::vector<Piece*>* pieceVectorToChange, bool isCopy) override;
-    std::vector<int>* getSpecialMoves() override;
+    std::vector<int> getSpecialMoves() override;
 
-    std::vector<int>* getValidMoves() override;
+    std::vector<int> getValidMoves() override;
+
+    void updatePiecesInformation(int currentGameTurn) override;
 
     //void movePiece(int moveIndex, bool testMoveOnCopyBoard, std::string* boardStrToChange, std::vector<Piece*>* piecesVectToChange) override;
 };
