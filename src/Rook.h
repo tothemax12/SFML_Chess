@@ -7,7 +7,7 @@ class Rook : public Piece
 private:
     
 public:
-    Rook(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
+    Rook(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations);
     ~Rook();
     
     std::vector<int> getBasicMoves() override;

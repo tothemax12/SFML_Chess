@@ -7,7 +7,7 @@ class Pawn : public Piece
 private:
     
 public:
-    Pawn(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
+    Pawn(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations);
     ~Pawn();
 
     //flags related to special moves

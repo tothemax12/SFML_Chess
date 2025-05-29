@@ -1,14 +1,41 @@
 #include "Game.h"
 #include <iostream>
 
-Game::Game(sf::Texture* boardTexture, 
+// void SoundPlayer::playSound(std::string soundID) {
+
+// }
+
+// void SoundPlayer::stopSound() {
+
+// }
+
+// SoundPlayer::SoundPlayer()
+// {
+//     soundBuffer.loadFromFile("sound path");
+//     currentSoundEffectPlaying.setBuffer(soundBuffer);
+// }
+
+// SoundPlayer::~SoundPlayer() {
+
+// }
+
+Game::Game(
+         sf::Texture* whiteWinsScreenTexture,
+         sf::Texture* blackWinsScreenTexture,
+         sf::Texture* boardTexture, 
          sf::Texture* highlightedSquareTexture, 
-         sf::Texture* wPawnTexture, 
-         sf::Texture* wRookTexture, 
-         sf::Texture* wKingTexture, 
+         sf::Texture* wPawnTexture,
+         std::vector<Animation> wPawnAnimations,
+         sf::Texture* wRookTexture,
+         std::vector<Animation> wRookAnimations,
+         sf::Texture* wKingTexture,
+         std::vector<Animation> wKingAnimations,
          sf::Texture* wQueenTexture,
+         std::vector<Animation> wQueenAnimations,
          sf::Texture* wKnightTexture,
+         std::vector<Animation> wKnightAnimations,
          sf::Texture* wBishopTexture,
+         std::vector<Animation> wBishopAnimations,
          sf::Texture* wPawnPromotionMenuTexture,
          sf::Texture* bPawnTexture, 
          sf::Texture* bRookTexture, 
@@ -17,6 +44,8 @@ Game::Game(sf::Texture* boardTexture,
          sf::Texture* bKnightTexture,
          sf::Texture* bBishopTexture,
          sf::Texture* bPawnPromotionMenuTexture) : 
+whiteTeamWinsSprite(*whiteWinsScreenTexture),
+blackTeamWinsSprite(*blackWinsScreenTexture),
 boardTexture(boardTexture),
 highlightedSquareTexture(highlightedSquareTexture), 
 wPawnTexture(wPawnTexture),
@@ -34,14 +63,22 @@ bKnightTexture(bKnightTexture),
 bBishopTexture(bBishopTexture),
 bPawnPromotionMenuTexture(bPawnPromotionMenuTexture),
 window(sf::RenderWindow(sf::VideoMode({640, 640}), "SFML works!")),
-board(boardTexture, 
+board(whiteWinsScreenTexture,
+    blackWinsScreenTexture,
+    boardTexture, 
       highlightedSquareTexture, 
       wPawnTexture, 
+      wPawnAnimations,
       wRookTexture, 
+      wRookAnimations,
       wKingTexture, 
+      wKingAnimations,
       wQueenTexture,
+      wQueenAnimations,
       wKnightTexture,
+      wKnightAnimations,
       wBishopTexture,
+      wBishopAnimations,
       wPawnPromotionMenuTexture, 
       bPawnTexture, 
       bRookTexture, 
@@ -133,7 +170,21 @@ void Game::debugValidMoves() {
     }
 }
 
-
+void Game::drawWinnerInformation(bool whiteTeamWon) {
+    if (whiteTeamWon) {
+        window.clear();
+        board.drawBoard(&window);
+        board.drawPiecesCurrentlyOnBoard(&window);
+        window.draw(whiteTeamWinsSprite);
+        window.display();
+    } else {
+        window.clear();
+        board.drawBoard(&window);
+        board.drawPiecesCurrentlyOnBoard(&window);
+        window.draw(blackTeamWinsSprite);
+        window.display();
+    }
+}
 
 void Game::draw(std::vector<int> validMovesOfClickedPiece) {
     //debugValidMoves();
@@ -370,6 +421,7 @@ std::array<int, 2> Game::checkInput() {
 int Game::playGame() {
     std::array<int, 2> clickCords = {-1, -1};
     std::vector<int> validMovesOfClickedPiece;
+    bool whiteTeamWon = false;
 
     while(!currentPlayerIsInCheckmate) {
         clickCords = checkInput();
@@ -381,6 +433,18 @@ int Game::playGame() {
         currentPlayerIsInCheckmate = board.sideIsInCheckMate(currentTeam);
 
         draw(validMovesOfClickedPiece);
+    }
+
+    if (currentTeam == "Black") {
+        whiteTeamWon = true;
+    } else {
+        whiteTeamWon = false;
+    }
+
+    //end game loop
+    while(true) {
+        clickCords = checkInput();
+        drawWinnerInformation(whiteTeamWon);
     }
 
     return -1;

@@ -13,3 +13,13 @@ when the move puts the king in danger
 future next steps:
 - start working on king basic moves
 - also working on king's special move now that we have the rook
+
+Objectives for May 28th
+----------------------------------
+- Make it faster
+- add in real valid moves texture
+- add in explosion for capture animation
+- add main menu
+- add sound
+
+Last thing is to finish adding all the character animations

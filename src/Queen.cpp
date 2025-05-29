@@ -1,8 +1,8 @@
 #include "Queen.h"
 #include "Board.h"
 
-Queen::Queen(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture) : 
-Piece(board, pieceIcon, cord, pieceTexture)
+Queen::Queen(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations) : 
+Piece(board, pieceIcon, cord, pieceTexture, listOfAnimations)
 {
 
 }

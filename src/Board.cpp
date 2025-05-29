@@ -21,37 +21,37 @@ Piece* PawnPromotionState::getInstanceOfSelectedPiece(int selectedPieceCord, Pie
     {
     case 26:
         if (onWhiteTeam) {
-            Bishop* newBishop = new Bishop(board, 'B', pieceToChange->cord, board->getPieceTexture("Bishop", onWhiteTeam));
+            Bishop* newBishop = new Bishop(board, 'B', pieceToChange->cord, board->getPieceTexture("Bishop", onWhiteTeam), board->wBishopAnimations);
             pieceToReturn = dynamic_cast<Bishop*>(newBishop);
         } else {
-            Bishop* newBishop = new Bishop(board, 'b', pieceToChange->cord, board->getPieceTexture("Bishop", onWhiteTeam));
+            Bishop* newBishop = new Bishop(board, 'b', pieceToChange->cord, board->getPieceTexture("Bishop", onWhiteTeam), board->wBishopAnimations);
             pieceToReturn = dynamic_cast<Bishop*>(newBishop);
         }
         break;
     case 27:
         if (onWhiteTeam) {
-            Knight* newKnight = new Knight(board, 'N', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam));
+            Knight* newKnight = new Knight(board, 'N', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam), board->wKnightAnimations);
             pieceToReturn = dynamic_cast<Knight*>(newKnight);
         } else {
-            Knight* newKnight = new Knight(board, 'n', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam));
+            Knight* newKnight = new Knight(board, 'n', pieceToChange->cord, board->getPieceTexture("Knight", onWhiteTeam), board->wKnightAnimations);
             pieceToReturn = dynamic_cast<Knight*>(newKnight);
         }
         break;
     case 28:
         if (onWhiteTeam) {
-            Queen* newQueen = new Queen(board, 'Q', pieceToChange->cord, board->getPieceTexture("Queen", onWhiteTeam));
+            Queen* newQueen = new Queen(board, 'Q', pieceToChange->cord, board->getPieceTexture("Queen", onWhiteTeam), board->wQueenAnimations);
             pieceToReturn = dynamic_cast<Queen*>(newQueen);
         } else {
-            Queen* newQueen = new Queen(board, 'q', pieceToChange->cord, board->getPieceTexture("Queen", onWhiteTeam));
+            Queen* newQueen = new Queen(board, 'q', pieceToChange->cord, board->getPieceTexture("Queen", onWhiteTeam), board->wQueenAnimations);
             pieceToReturn = dynamic_cast<Queen*>(newQueen);
         }
         break;
     case 29:
         if (onWhiteTeam) {
-            Rook* newRook = new Rook(board, 'R', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam));
+            Rook* newRook = new Rook(board, 'R', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam), board->wRookAnimations);
             pieceToReturn = dynamic_cast<Rook*>(newRook);
         } else {
-            Rook* newRook = new Rook(board, 'r', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam));
+            Rook* newRook = new Rook(board, 'r', pieceToChange->cord, board->getPieceTexture("Rook", onWhiteTeam), board->wRookAnimations);
             pieceToReturn = dynamic_cast<Rook*>(newRook);
         }
         break;
@@ -173,18 +173,27 @@ void PawnPromotionState::drawLoop(Piece* pawnBeingChanged, std::string* boardStr
     pieceNotSelected = true;
 }
 
-Board::Board(sf::Texture* boardTexture, 
+Board::Board(
+            sf::Texture* whiteWinsScreenTexture,
+            sf::Texture* blackWinsScreenTexture,
+            sf::Texture* boardTexture, 
             sf::Texture* highlightedSquareTexture, 
-            sf::Texture* wPawnTexture, 
+            sf::Texture* wPawnTexture,
+            std::vector<Animation> wPawnAnimations,
             sf::Texture* wRookTexture,
-            sf::Texture* wKingTexture, 
-            sf::Texture* wQueenTexture, 
+            std::vector<Animation> wRookAnimations,
+            sf::Texture* wKingTexture,
+            std::vector<Animation> wKingAnimations,
+            sf::Texture* wQueenTexture,
+            std::vector<Animation> wQueenAnimations,
             sf::Texture* wKnightTexture,
+            std::vector<Animation> wKnightAnimations,
             sf::Texture* wBishopTexture,
+            std::vector<Animation> wBishopAnimations,
             sf::Texture* wPawnPromotionMenuTexture,
             sf::Texture* bPawnTexture, 
-            sf::Texture* bRookTexture,
-            sf::Texture* bKingTexture,
+            sf::Texture* bRookTexture, 
+            sf::Texture* bKingTexture, 
             sf::Texture* bQueenTexture,
             sf::Texture* bKnightTexture,
             sf::Texture* bBishopTexture,
@@ -194,11 +203,17 @@ boardTexture(boardTexture),
 boardSprite(*boardTexture),
 highlightSquareSprite(*highlightedSquareTexture),
 wPawnTexture(wPawnTexture),
+wPawnAnimations(wPawnAnimations),
 wRookTexture(wRookTexture),
+wRookAnimations(wRookAnimations),
 wKingTexture(wKingTexture),
+wKingAnimations(wKingAnimations),
 wQueenTexture(wQueenTexture),
+wQueenAnimations(wQueenAnimations),
 wKnightTexture(wKnightTexture),
+wKnightAnimations(wKnightAnimations),
 wBishopTexture(wBishopTexture),
+wBishopAnimations(wBishopAnimations),
 wPawnPromotionMenuTexture(wPawnPromotionMenuTexture),
 bPawnTexture(bPawnTexture),
 bRookTexture(bRookTexture),
@@ -243,6 +258,7 @@ pawnPromotionState(this, bPawnPromotionMenuTexture, wPawnPromotionMenuTexture)
     //piecesCurrentlyOnBoard.emplace_back(testPawn2);
 
     //pawnPromotionState = PawnPromotionState(window, this, bPawnTexture);
+    highlightSquareSprite.setColor(sf::Color::Green);
 }
 
 Board::~Board()
@@ -271,7 +287,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
         if (boardString[i] != '0') {
             //Pawn init
             if(boardString[i] == 'P') {
-                Pawn* newPawn = new Pawn(this, 'P', i, wPawnTexture);
+                Pawn* newPawn = new Pawn(this, 'P', i, wPawnTexture, wPawnAnimations);
                 
                 //set the cord based on the index in the string arr
                 screenCords = convertStrIndexToBoardCords(newPawn->cord);
@@ -280,7 +296,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
                 piecesOnTheBoard->emplace_back(newPawn);
             }
             if(boardString[i] == 'p') {
-                Pawn* newPawn = new Pawn(this, 'p', i, bPawnTexture);
+                Pawn* newPawn = new Pawn(this, 'p', i, bPawnTexture, wPawnAnimations);
 
                 screenCords = convertStrIndexToBoardCords(newPawn->cord);
                 newPawn->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
@@ -291,7 +307,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
 
             //rook init
             if(boardString[i] == 'R') {
-                Rook* newRook = new Rook(this, 'R', i, wRookTexture);
+                Rook* newRook = new Rook(this, 'R', i, wRookTexture, wRookAnimations);
                 
                 //set the cord based on the index in the string arr
                 screenCords = convertStrIndexToBoardCords(newRook->cord);
@@ -300,7 +316,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
                 piecesOnTheBoard->emplace_back(newRook);
             }
             if(boardString[i] == 'r') {
-                Rook* newRook = new Rook(this, 'r', i, bRookTexture);
+                Rook* newRook = new Rook(this, 'r', i, bRookTexture, wRookAnimations);
 
                 screenCords = convertStrIndexToBoardCords(newRook->cord);
                 newRook->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
@@ -310,7 +326,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
             //end rook init------------------------------------------------------------------------
 
             if(boardString[i] == 'K') {
-                King* newKing = new King(this, 'K', i, wKingTexture);
+                King* newKing = new King(this, 'K', i, wKingTexture, wKingAnimations);
                 
                 //set the cord based on the index in the string arr
                 screenCords = convertStrIndexToBoardCords(newKing->cord);
@@ -319,7 +335,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
                 piecesOnTheBoard->emplace_back(newKing);
             }
             if(boardString[i] == 'k') {
-                King* newKing = new King(this, 'k', i, bKingTexture);
+                King* newKing = new King(this, 'k', i, bKingTexture, wKingAnimations);
 
                 screenCords = convertStrIndexToBoardCords(newKing->cord);
                 newKing->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
@@ -328,7 +344,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
             }
 
             if(boardString[i] == 'Q') {
-                Queen* newQueen = new Queen(this, 'Q', i, wQueenTexture);
+                Queen* newQueen = new Queen(this, 'Q', i, wQueenTexture, wQueenAnimations);
                 
                 //set the cord based on the index in the string arr
                 screenCords = convertStrIndexToBoardCords(newQueen->cord);
@@ -337,7 +353,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
                 piecesOnTheBoard->emplace_back(newQueen);
             }
             if(boardString[i] == 'q') {
-                Queen* newQueen = new Queen(this, 'q', i, bQueenTexture);
+                Queen* newQueen = new Queen(this, 'q', i, bQueenTexture, wQueenAnimations);
 
                 screenCords = convertStrIndexToBoardCords(newQueen->cord);
                 newQueen->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
@@ -346,7 +362,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
             }
 
             if(boardString[i] == 'N') {
-                Knight* newKnight = new Knight(this, 'N', i, wKnightTexture);
+                Knight* newKnight = new Knight(this, 'N', i, wKnightTexture, wKnightAnimations);
                 
                 //set the cord based on the index in the string arr
                 screenCords = convertStrIndexToBoardCords(newKnight->cord);
@@ -355,7 +371,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
                 piecesOnTheBoard->emplace_back(newKnight);
             }
             if(boardString[i] == 'n') {
-                Knight* newKnight = new Knight(this, 'n', i, bKnightTexture);
+                Knight* newKnight = new Knight(this, 'n', i, bKnightTexture, wKnightAnimations);
 
                 screenCords = convertStrIndexToBoardCords(newKnight->cord);
                 newKnight->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
@@ -364,7 +380,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
             }
 
             if(boardString[i] == 'B') {
-                Bishop* newBishop = new Bishop(this, 'B', i, wBishopTexture);
+                Bishop* newBishop = new Bishop(this, 'B', i, wBishopTexture, wBishopAnimations);
                 
                 //set the cord based on the index in the string arr
                 screenCords = convertStrIndexToBoardCords(newBishop->cord);
@@ -373,7 +389,7 @@ std::vector<Piece*>* Board::initializePiecesOnBoardBasedOnBoardString(std::strin
                 piecesOnTheBoard->emplace_back(newBishop);
             }
             if(boardString[i] == 'b') {
-                Bishop* newBishop = new Bishop(this, 'b', i, bBishopTexture);
+                Bishop* newBishop = new Bishop(this, 'b', i, bBishopTexture, wBishopAnimations);
 
                 screenCords = convertStrIndexToBoardCords(newBishop->cord);
                 newBishop->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});

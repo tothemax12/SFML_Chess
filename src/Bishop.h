@@ -7,7 +7,7 @@ class Bishop : public Piece
 private:
     
 public:
-    Bishop(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
+    Bishop(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations);
     ~Bishop();
     
     std::vector<int> getBasicMoves() override;

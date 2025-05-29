@@ -1,8 +1,8 @@
 #include "King.h"
 #include "Board.h"
 
-King::King(Board* board, char pieceIcon, int cord, sf::Texture* pieceTexture) : 
-Piece(board, pieceIcon, cord, pieceTexture)
+King::King(Board* board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations) : 
+Piece(board, pieceIcon, cord, pieceTexture, listOfAnimations)
 {
 
 }

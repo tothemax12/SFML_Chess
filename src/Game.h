@@ -1,20 +1,48 @@
 #pragma once
+#include <map>
 #include "Board.h"
+#include "Animation.h"
+#include "SFML/Audio.hpp"
+
+// class SoundPlayer {
+//     //std::map<std::string, sf::Sound> soundMap;
+
+//     sf::SoundBuffer soundBuffer;
+//     sf::Sound currentSoundEffectPlaying;
+//     //sf::Music currentSong;
+
+//     void playSound(std::string soundID);
+//     void stopSound();
+//     SoundPlayer();
+//     ~SoundPlayer();
+// };
 
 class Game
 {
 private:
     Board board;
     sf::RenderWindow window;
+    sf::Texture* whiteWinsScreenTexture;
+    sf::Texture* blackWinsScreenTexture;
+    sf::Sprite whiteTeamWinsSprite;
+    sf::Sprite blackTeamWinsSprite;
+
     sf::Texture* boardTexture;
     sf::Texture* highlightedSquareTexture;
     
     sf::Texture* wPawnTexture;
+    std::vector<Animation> wPawnAnimations;
     sf::Texture* wRookTexture;
+    std::vector<Animation> wRookAnimations;
     sf::Texture* wKingTexture;
+    std::vector<Animation> wKingAnimations;
     sf::Texture* wQueenTexture;
+    std::vector<Animation> wQueenAnimations;
+
     sf::Texture* wKnightTexture;
+    std::vector<Animation> wKnightAnimations;
     sf::Texture* wBishopTexture;
+    std::vector<Animation> wBishopAnimations;
     sf::Texture* wPawnPromotionMenuTexture;
 
     sf::Texture* bPawnTexture;
@@ -26,14 +54,23 @@ private:
     sf::Texture* bPawnPromotionMenuTexture;
 
 public:
-    Game(sf::Texture* boardTexture, 
+    Game(
+         sf::Texture* whiteWinsScreenTexture,
+         sf::Texture* blackWinsScreenTexture,
+         sf::Texture* boardTexture, 
          sf::Texture* highlightedSquareTexture, 
-         sf::Texture* wPawnTexture, 
-         sf::Texture* wRookTexture, 
-         sf::Texture* wKingTexture, 
+         sf::Texture* wPawnTexture,
+         std::vector<Animation> wPawnAnimations,
+         sf::Texture* wRookTexture,
+         std::vector<Animation> wRookAnimations,
+         sf::Texture* wKingTexture,
+         std::vector<Animation> wKingAnimations,
          sf::Texture* wQueenTexture,
+         std::vector<Animation> wQueenAnimations,
          sf::Texture* wKnightTexture,
+         std::vector<Animation> wKnightAnimations,
          sf::Texture* wBishopTexture,
+         std::vector<Animation> wBishopAnimations,
          sf::Texture* wPawnPromotionMenuTexture,
          sf::Texture* bPawnTexture, 
          sf::Texture* bRookTexture, 
@@ -44,6 +81,7 @@ public:
          sf::Texture* bPawnPromotionMenuTexture);
     ~Game();
     void debugValidMoves();
+    void drawWinnerInformation(bool whiteTeamWon);
     void draw(std::vector<int> validMovesOfClickedPiece);
 
     std::vector<int> getValidMovesForClickedSpace(int mouseX, int mouseY);

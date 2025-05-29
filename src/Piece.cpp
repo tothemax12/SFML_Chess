@@ -1,13 +1,14 @@
 #include "Piece.h"
 #include "Board.h"
 
-Piece::Piece(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture) : 
+Piece::Piece(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations) : 
 pieceSprite(*pieceTexture)
 {
 	this->pieceIcon = pieceIcon;
 	this->cord = cord;
 	this->hasNotMoved = true;
     this->board = board;
+    this->listOfAnimations = listOfAnimations;
     //scale down the piece sprite a bit
     //pieceSprite.setScale({.4, .4});
 }
@@ -94,6 +95,18 @@ void Piece::movePiece(int currentGameTurn, int moveIndex, std::string* boardStrT
             }
 
             if (isCopy) {//we are modifying the copy to preform the move
+
+                //same as just moving, but we need to remove the piece that was
+                //captured from the piece vect
+                // std::vector<Piece*>* piecesCurrentlyOnBoard = pieceVectorToChange;
+                // for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++)
+                // {
+                //     if (piecesCurrentlyOnBoard->at(i)->cord == moveIndex) {
+                //         piecesCurrentlyOnBoard->erase(piecesCurrentlyOnBoard->begin()+i);
+                //         break;
+                //     }
+                // }
+
                 for (int i = 0; i < pieceVectorToChange->size(); i++)
                 {
                  if (pieceVectorToChange->at(i)->cord == this->cord) {
@@ -109,11 +122,38 @@ void Piece::movePiece(int currentGameTurn, int moveIndex, std::string* boardStrT
                 
                 //can't forget to update the sprites location as well
                 std::array<int, 2> screenCords = board->convertStrIndexToBoardCords(this->cord);
-                this->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
+                
+                //animation stuff
+                std::array<int, 2> screenCordsAnimationDisplay = board->convertStrIndexToBoardCords(this->cord);
+                screenCordsAnimationDisplay[0] = screenCordsAnimationDisplay[0]-50;
 
+                //display copy of captured piece at the spot
+                //board->window->draw(pieceSpriteOfCapturedPieceForAnimation);
+                //board->window->display();
+
+                //hide player sprite and play their attack animation
+                this->pieceSprite.setPosition({(float)700, (float)700});
+                this->listOfAnimations.at(0).playAnimation(board->window, screenCordsAnimationDisplay, *board);
+                
+                //play explosion on the space that was captured
+                screenCordsAnimationDisplay[0] = screenCordsAnimationDisplay[0]+50;
+                this->listOfAnimations.at(1).playAnimation(board->window, screenCordsAnimationDisplay, *board);
+
+                this->pieceSprite.setPosition({(float)screenCords[0], (float)screenCords[1]});
 
                 //remember to update the pieces stuff
                 updatePiecesInformation(currentGameTurn);
+
+                //same as just moving, but we need to remove the piece that was
+                //captured from the piece vect
+                // std::vector<Piece*>* piecesCurrentlyOnBoard = pieceVectorToChange;
+                // for (int i = 0; i < piecesCurrentlyOnBoard->size(); i++)
+                // {
+                //     if (piecesCurrentlyOnBoard->at(i)->cord == moveIndex) {
+                //         piecesCurrentlyOnBoard->erase(piecesCurrentlyOnBoard->begin()+i);
+                //         break;
+                //     }
+                // }
 
                 //if this piece is a pawn and we just moved to the end of
                 //the board, we need to promote the pawn, I think we can do it here

@@ -4,6 +4,7 @@
 //#include "Game.h"
 #include <string>
 #include <vector>
+#include "Animation.h"
 #include <SFML/Graphics.hpp>
 
 class Board;
@@ -16,8 +17,10 @@ public:
     int cord;
     bool hasNotMoved;
 
-    Piece(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
+    Piece(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations);
     ~Piece();
+
+    std::vector<Animation> listOfAnimations;
 
     sf::Texture pieceTexture;
     sf::Sprite pieceSprite;

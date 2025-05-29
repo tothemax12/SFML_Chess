@@ -68,28 +68,44 @@ private:
 
 
 public:
+    std::vector<Animation> wKnightAnimations;
+    std::vector<Animation> wQueenAnimations;
+    std::vector<Animation> wPawnAnimations;
+    std::vector<Animation> wBishopAnimations;
+    std::vector<Animation> wRookAnimations;
+    std::vector<Animation> wKingAnimations;
+
     //piece definitions
     //Pawn testPawn1;
     //Pawn testPawn2;
     //Pawn testPawn2;
 
-    Board(sf::Texture* boardTexture, 
-          sf::Texture* highlightedSquareTexture, 
-          sf::Texture* wPawnTexture, 
-          sf::Texture* wRookTexture,
-          sf::Texture* wKingTexture,
-          sf::Texture* wQueenTexture, 
-          sf::Texture* wKnightTexture,
-          sf::Texture* wBishopTexture,
-          sf::Texture* wPawnPromotionMenuTexture,
-          sf::Texture* bPawnTexture, 
-          sf::Texture* bRookTexture,
-          sf::Texture* bKingTexture,
-          sf::Texture* bQueenTexture,
-          sf::Texture* bKnightTexture,
-          sf::Texture* bBishopTexture,
-          sf::Texture* bPawnPromotionMenuTexture,
-          sf::RenderWindow* window);
+    Board(
+         sf::Texture* whiteWinsScreenTexture,
+         sf::Texture* blackWinsScreenTexture,
+         sf::Texture* boardTexture, 
+         sf::Texture* highlightedSquareTexture, 
+         sf::Texture* wPawnTexture,
+         std::vector<Animation> wPawnAnimations,
+         sf::Texture* wRookTexture,
+         std::vector<Animation> wRookAnimations,
+         sf::Texture* wKingTexture,
+         std::vector<Animation> wKingAnimations,
+         sf::Texture* wQueenTexture,
+         std::vector<Animation> wQueenAnimations,
+         sf::Texture* wKnightTexture,
+         std::vector<Animation> wKnightAnimations,
+         sf::Texture* wBishopTexture,
+         std::vector<Animation> wBishopAnimations,
+         sf::Texture* wPawnPromotionMenuTexture,
+         sf::Texture* bPawnTexture, 
+         sf::Texture* bRookTexture, 
+         sf::Texture* bKingTexture, 
+         sf::Texture* bQueenTexture,
+         sf::Texture* bKnightTexture,
+         sf::Texture* bBishopTexture,
+         sf::Texture* bPawnPromotionMenuTexture,
+         sf::RenderWindow* window);
     ~Board();
     void readInBoardFromFile();
     std::vector<Piece*>* initializePiecesOnBoardBasedOnBoardString(std::string boardString);

@@ -7,7 +7,7 @@ class King : public Piece
 private:
     /* data */
 public:
-    King(Board* board, char pieceIcon, int cord, sf::Texture* pieceTexture);
+    King(Board* board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations);
     ~King();
     
     std::vector<int> getBasicMoves() override;

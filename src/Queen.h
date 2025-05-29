@@ -7,7 +7,7 @@ class Queen : public Piece
 private:
     
 public:
-    Queen(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
+    Queen(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations);
     ~Queen();
     
     std::vector<int> getBasicMoves() override;

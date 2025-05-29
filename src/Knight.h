@@ -7,9 +7,9 @@ class Knight : public Piece
 private:
     
 public:
-    Knight(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture);
+    Knight(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations);
     ~Knight();
-    
+
     std::vector<int> getBasicMoves() override;
     std::vector<int> getMyCapturableSpaces(std::string boardToCheck) override;
 

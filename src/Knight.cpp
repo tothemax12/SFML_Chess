@@ -1,8 +1,8 @@
 #include "Knight.h"
 #include "Board.h"
 
-Knight::Knight(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture) : 
-Piece(board, pieceIcon, cord, pieceTexture)
+Knight::Knight(Board *board, char pieceIcon, int cord, sf::Texture* pieceTexture, std::vector<Animation> listOfAnimations) : 
+Piece(board, pieceIcon, cord, pieceTexture, listOfAnimations)
 {
 
 }
