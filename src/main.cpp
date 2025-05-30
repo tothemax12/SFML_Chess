@@ -164,6 +164,9 @@ int main() {
                      &bBishopTexture,
                      &bPawnPromotionMenuTexture);
 
+    MainMenuState mainMenuState = MainMenuState(game.getWindow());
+
+    mainMenuState.draw();
     game.playGame();
     
     // Animation attackAnimation(&wKnightAttackAnimationSpriteSheet);

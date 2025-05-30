@@ -18,6 +18,174 @@
 // SoundPlayer::~SoundPlayer() {
 
 // }
+MainMenuState::MainMenuState(sf::RenderWindow* window) : 
+face1Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/aqua-man-face.png"),
+face2Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/b-king-face.png"),
+face3Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/elec-man-face.png"),
+face4Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/enemy-face.png"),
+face5Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/guts-man-face.png"),
+face6Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/mega-man-face.png"),
+face7Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/proto-man-face.png"),
+face8Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/roll-face.png"),
+face9Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/slash-man-face.png"),
+face10Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/white-pawn-face.png"),
+face11Texture("/home/max/SFML_Chess/res/mmbn-chess-assets/bass-face.png"),
+face1Sprite(face1Texture),
+face2Sprite(face2Texture),
+face3Sprite(face3Texture),
+face4Sprite(face4Texture),
+face5Sprite(face5Texture),
+face6Sprite(face6Texture),
+face7Sprite(face7Texture),
+face8Sprite(face8Texture),
+face9Sprite(face9Texture),
+face10Sprite(face10Texture),
+face11Sprite(face11Texture),
+
+mainMenuBackGroundTexture("/home/max/SFML_Chess/res/mmbn-chess-assets/main-menu-background.png"),
+mainMenuLogoTexture("/home/max/SFML_Chess/res/mmbn-chess-assets/main-menu-logo.png"),
+mainMenuMusic(sf::Music("/home/max/SFML_Chess/res/mmbn-chess-assets/4-hometown-101soundboards.mp3")),
+mainMenuBackGroundImageSprite(mainMenuBackGroundTexture),
+mainMenuLogoImageSprite(mainMenuLogoTexture)
+{   
+    this->window = window;
+    stateIsActive = true;
+
+    //init the queues by putting random sprites in it
+    srand(time(0));
+    int randNum = rand() % arrayOfSprites.size();
+    int lastRandNum = randNum;
+    int numOfSprites = 7;
+    for (int i = 0; i < numOfSprites+1; i++) {
+        while(randNum == lastRandNum) {
+            randNum = rand() % arrayOfSprites.size();
+        }
+        lastRandNum = randNum;
+
+        leftSideSprites.push_back(arrayOfSprites[randNum]);
+    }
+
+    for (int i = 0; i < numOfSprites+1; i++) {
+        while(randNum == lastRandNum) {
+            randNum = rand() % arrayOfSprites.size();
+        }
+        lastRandNum = randNum;
+        
+        rightSideSprites.push_back(arrayOfSprites[randNum]);
+    }
+
+    int y = 10;
+    for (int i = 0; i < numOfSprites+1; i++) {
+        leftSideSprites.at(i).setPosition({10, y});
+        rightSideSprites.at(i).setPosition({535, y});
+        y+=125;
+    }
+
+    // for (int i = 0; i < arrayOfSprites.size(); i++) {
+    //     arrayOfSprites.at(i).setPosition({10, y});
+    //     //window->draw(*leftSideSprites[i]);
+    //     //window->draw(*rightSideSprites[i]);
+    //     y += 15;
+    // }
+
+}
+
+MainMenuState::~MainMenuState()
+{
+
+}
+
+void MainMenuState::moveSides() {
+    
+    for (int i = 0; i < leftSideSprites.size(); i++) {
+        leftSideSprites.at(i).setPosition({(leftSideSprites.at(i).getPosition().x), (leftSideSprites.at(i).getPosition().y+1)});
+        rightSideSprites.at(i).setPosition({(rightSideSprites.at(i).getPosition().x), (rightSideSprites.at(i).getPosition().y-1)});
+
+    }
+
+    // for (int i = 0; i < rightSideSprites.size(); i++) {
+    //     rightSideSprites.at(i).setPosition({(rightSideSprites.at(i).getPosition().x), (rightSideSprites.at(i).getPosition().y-1)});
+    // }
+}
+
+void MainMenuState::drawSides() {
+    for (int i = 0; i < leftSideSprites.size(); i++) {
+        window->draw(leftSideSprites[i]);
+        window->draw(rightSideSprites[i]);
+        //window->draw(arrayOfSprites[i]);
+    }
+
+    // for (int i = 0; i < rightSideSprites.size(); i++) {
+    //     //window->draw(*leftSideSprites[i]);
+    //     window->draw(*rightSideSprites[i]);
+    // }
+}
+
+void MainMenuState::cycleImages() {
+    srand(time(0));
+    int randNum = rand() % arrayOfSprites.size();
+    for (int i = 0; i < leftSideSprites.size(); i++) {
+        if (leftSideSprites.at(i).getPosition().y+114 == 754) {
+            leftSideSprites.erase(leftSideSprites.begin()+i);
+
+            leftSideSprites.push_back(arrayOfSprites[randNum]);
+            
+            leftSideSprites.at(leftSideSprites.size()-1).setPosition({10, -114});
+            break;
+        }
+    } 
+
+    for (int i = 0; i < rightSideSprites.size(); i++) {
+        if (rightSideSprites.at(i).getPosition().y == -114) {
+            rightSideSprites.erase(rightSideSprites.begin()+i);
+
+            rightSideSprites.push_back(arrayOfSprites[randNum]);
+            
+            rightSideSprites.at(rightSideSprites.size()-1).setPosition({535, 755});
+            break;
+        }
+    } 
+}
+
+void MainMenuState::handleInput() 
+{
+    //handle input
+    while (const std::optional event = window->pollEvent())
+    {
+        if (event->is<sf::Event::Closed>())
+        {
+            window->close();
+        }
+        else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+        {
+            stateIsActive = false;
+            if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+                window->close();
+        } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+            stateIsActive = false;
+        }
+    }
+}
+
+void MainMenuState::draw()
+{
+    mainMenuMusic.play();
+
+    while (stateIsActive) {
+        handleInput();
+        window->draw(mainMenuBackGroundImageSprite);
+        drawSides();
+        window->draw(mainMenuLogoImageSprite);
+        window->display();
+        moveSides();
+        cycleImages();
+        sf::sleep(sf::milliseconds(10));
+    }
+
+    mainMenuMusic.stop();
+    stateIsActive = true;
+}
+
 
 Game::Game(
          sf::Texture* whiteWinsScreenTexture,
@@ -96,6 +264,12 @@ Game::~Game()
 {
 
 }
+
+sf::RenderWindow* Game::getWindow() {
+    sf::RenderWindow* windowPtr = &window;
+    return windowPtr;
+}
+
 
 //need a visual tool to debug the spaces (validMoves) the pieces can move or I am going
 //to go bonkers bananas
@@ -404,11 +578,14 @@ std::array<int, 2> Game::checkInput() {
             if (event->is<sf::Event::Closed>())
             {
                 window.close();
+                clickCords[0] = -999;
             }
             else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
-                if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+                if (keyPressed->scancode == sf::Keyboard::Scancode::Escape) {
                     window.close();
+                    clickCords[0] = -999;
+                }
             } else if (const auto* mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 clickCords[0] = mouseButtonPressed->position.x;
                 clickCords[1] = mouseButtonPressed->position.y;
@@ -428,6 +605,10 @@ int Game::playGame() {
 
         if (clickCords[0] != -1) {
            validMovesOfClickedPiece = handleClickGame(clickCords[0], clickCords[1]);
+        }
+
+        if (clickCords[0] == -999 && clickCords[1] == -1) {
+            return -1;
         }
 
         currentPlayerIsInCheckmate = board.sideIsInCheckMate(currentTeam);

@@ -23,3 +23,10 @@ Objectives for May 28th
 - add sound
 
 Last thing is to finish adding all the character animations
+
+Objectives for May 29th 2024
+-------------------------------------------------------------
+-Rework the static main menu image to be devoid of the face icons
+-make it so the left side face icons go up and off the screen and a new
+random face starts on the bottom
+-same for the right side but they go downwards
