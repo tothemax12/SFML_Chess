@@ -9,7 +9,7 @@ Learning from this project:
 - Implementing a basic animation system in SFML
 
 **Intro**
-[![Watch the video](https://github.com/tothemax12/SFML_Chess/blob/master/intro.png)](https://github.com/tothemax12/SFML_Chess/blob/master/Gameplay%20showcase.mp4)
+[![Watch the video](https://github.com/tothemax12/SFML_Chess/blob/master/intro.png)](https://github.com/tothemax12/SFML_Chess/blob/master/Intro%20Showcase.mp4)
 
 **Gameplay**
 [![Watch the video](https://github.com/tothemax12/SFML_Chess/blob/master/gameplay.png)](https://github.com/tothemax12/SFML_Chess/blob/master/Gameplay%20showcase.mp4)
